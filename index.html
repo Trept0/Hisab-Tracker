@@ -10,26 +10,28 @@
   --purple-bg:#eeedfe;--purple-text:#26215c;
 }
 /* মোবাইলের জন্য ফুল-স্ক্রিন রেসপনসিভ এবং ডেস্কটপের জন্য ফ্রেম লেআউট */
-.pf{
-  width:100%;
-  max-width:450px;
-  min-height:100vh;
-  margin:0 auto;
-  background:#f2f8f4;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  font-family:var(--font-sans);
-  position:relative;
+.pf {
+    width: 100%;
+    max-width: 100%; /* মোবাইলে পুরো স্ক্রিন জুড়ে দেখানোর জন্য ১০০% করা হলো */
+    min-height: 100vh;
+    margin: 0;
+    background: #f2f8f4;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+    position: relative;
 }
+
 @media (min-width: 480px) {
-  .pf {
-    min-height:740px;
-    margin:20px auto;
-    border-radius:36px;
-    border:2px solid #a3e0be;
-    box-shadow:0 0 0 6px #d1f0de;
-  }
+    .pf {
+        max-width: 450px; /* ডেক্সটপ বা বড় স্ক্রিনে গেলে এটি অটোমেটিক ফোনের মতো ফ্রেমে চলে আসবে */
+        min-height: 740px;
+        margin: 20px auto;
+        border-radius: 36px;
+        border: 2px solid #a3e0be;
+        box-shadow: 0 0 6px #d1f0de;
+    }
 }
 .sb{background:var(--header-bg);color:var(--header-text);padding:10px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
 .ah{background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
