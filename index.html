@@ -27,19 +27,20 @@
     overflow: hidden;
   }
   
-  /* মেইন অ্যাপ ফ্রেম ফিক্স - বটম ফাকা অংশ দূর করার জন্য পুরোপুরি ফিক্সড হাইট লেআউট */
+  /* মেইন অ্যাপ ফ্রেম - মোবাইলে ফুল স্ক্রিন ফিট রাখার জন্য ফিক্সড */
   .pf{
-    width:100%;
-    max-width:100%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     background: #f2f8f4;
     position: relative;
     overflow: hidden;
+    margin: 0 auto;
   }
   
-  @media (min-width: 480px) {
+  /* শুধুমাত্র ডেক্সটপ বা বড় মনিটরের জন্য ফ্রেম লুক (মোবাইলে কোনো প্রভাব ফেলবে না) */
+  @media (min-width: 768px) {
     body {
       background: #eef5f0;
       display: flex;
@@ -48,18 +49,19 @@
       overflow: auto;
     }
     .pf {
-      max-width:450px;
-      height:740px;
-      border-radius:36px;
-      border:2px solid #a3e0be;
-      box-shadow:0 10px 30px rgba(21,92,56,0.1);
+      max-width: 450px;
+      height: 85vh;
+      max-height: 800px;
+      border-radius: 32px;
+      border: 2px solid #a3e0be;
+      box-shadow: 0 10px 30px rgba(21,92,56,0.1);
     }
   }
   
-  .sb{background:var(--header-bg);color:var(--header-text);padding:12px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
-  .ah{background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
-  .ah h1{font-size:17px;font-weight:500;color:var(--header-text);}
-  .ah p{font-size:12px;color:var(--header-sub);margin-top:2px;}
+  .sb {background:var(--header-bg);color:var(--header-text);padding:12px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
+  .ah {background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
+  .ah h1 {font-size:17px;font-weight:500;color:var(--header-text);}
+  .ah p {font-size:12px;color:var(--header-sub);margin-top:2px;}
   
   .body{
     flex:1;
@@ -69,7 +71,7 @@
     -webkit-overflow-scrolling: touch;
   }
   
-  /* বটম নেভিগেশন বার - একদম স্ক্রিনের নিচে চুইংগামের মতো লেগে থাকবে */
+  /* বটম নেভিগেশন বার ফিক্স */
   .bnav{
     background:#fff;
     border-top:0.5px solid #a3e0be;
@@ -91,7 +93,6 @@
   .fi{width:100%;padding:9px 11px;font-size:13px;border:0.5px solid #a3e0be;border-radius:8px;background:#f0faf4;outline:none;color:#1a3a2a;}
   .fi:focus{border-color:var(--accent);}
   
-  /* ইনপুট গ্রিড ও বাটন লেআউট */
   .fr{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .cat-box { display: flex; gap: 6px; align-items: flex-end; }
   .add-cat-btn { padding: 9px 8px; font-size: 11px; background: #d1f0de; border: 0.5px solid #a3e0be; color: var(--g700); border-radius: 8px; cursor: pointer; white-space: nowrap; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: bold;}
@@ -194,7 +195,6 @@ const ACCTS=[
   {id:'prime', name:'Prime Bank',type:'ব্যাংক',bg:'#eeedfe',tc:'#26215c',icon:'ti-building-bank',balance:7800},
 ];
 
-// ডিফল্ট খরচের খাতসমূহ
 const DEFAULT_CATS = ['খাবার', 'যাতায়াত', 'শিক্ষা', 'বিদ্যুৎ/গ্যাস', 'চিকিৎসা', 'বিনোদন', 'পোশাক', 'অন্যান্য'];
 const CAT_ICONS = {খাবার:'ti-bowl',যাতায়াত:'ti-bus',শিক্ষা:'ti-book','বিদ্যুৎ/গ্যাস':'ti-bolt',চিকিৎসা:'ti-stethoscope',বিনোদন:'ti-device-tv',পোশাক:'ti-shirt',অন্যান্য:'ti-dots'};
 
@@ -208,7 +208,7 @@ function loadState(){
       {id:3,amount:1500,category:'শিক্ষা',date:getTodayDate(),desc:'কোচিং ফি',acct:'islami'},
     ],
     debts:[],
-    customCategories: [], // ইউজার যদি নিজে কোনো খাত যোগ করে তার ডাটাবেজ
+    customCategories: [],
     nextId:10,activeTab:'dashboard',debtType:'receive',editingAcct:null,showModal:false
   };
 }
@@ -235,7 +235,6 @@ function totPay(){return S.debts.filter(d=>d.type==='give').reduce((s,d)=>s+Numb
 function acctName(id){const a=S.accounts.find(a=>a.id===id);return a?a.name:'?';}
 function wallet(){return S.accounts.find(a=>a.id==='wallet');}
 
-// সকল খাত একসাথে পাওয়ার ফাংশন
 function getAllCategories() {
   return [...DEFAULT_CATS, ...S.customCategories];
 }
@@ -470,7 +469,6 @@ function attachEv(){
   const printBtn = document.getElementById('printReportBtn');
   if(printBtn) printBtn.onclick = openPrintOverlay;
 
-  // নতুন খাত যুক্ত করার লজিক
   const addCatBtn = document.getElementById('addNewCatBtn');
   if(addCatBtn) {
     addCatBtn.onclick = () => {
@@ -484,7 +482,6 @@ function attachEv(){
         S.customCategories.push(trimmed);
         save();
         render();
-        // নতুন খাতটিকে অটোমেটিক সিলেক্ট করে দেওয়া
         const catSelect = document.getElementById('eCat');
         if(catSelect) catSelect.value = trimmed;
       }
