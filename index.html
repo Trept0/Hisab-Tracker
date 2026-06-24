@@ -1,7 +1,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --g50:#f0faf4;--g100:#d1f0de;--g200:#a3e0be;--g400:#3db87a;--g500:#2a9e63;--g600:#1e7a4a;--g700:#155c38;--g800:#0d3f26;--g900:#072918;
+  --g50:#f0faf4;--g100:#d1f0de;--g200:#a3e0be;--g400:#3db87a;--g500:#2a9e63;--g600:#1e7a4a;--g700:#155c38;--g800:#0a3d24;
   --header-bg:#155c38;--header-text:#d1f0de;--header-sub:#6fcf97;
   --accent:#2a9e63;--accent-dark:#1e7a4a;
   --red-bg:#fde8e8;--red-text:#9b1c1c;--red-dark:#c0392b;
@@ -9,10 +9,11 @@
   --blue-bg:#dbeeff;--blue-text:#0c447c;
   --purple-bg:#eeedfe;--purple-text:#26215c;
 }
-/* মোবাইলের জন্য ফুল-স্ক্রিন রেসপনসিভ এবং ডেস্কটপের জন্য ফ্রেম লেআউট */
+
+/* মোবাইলের জন্য ফুল-স্ক্রিন রেসপনসিভ এবং ডেক্সটপের জন্য ফ্রেম লেআউট */
 .pf {
     width: 100%;
-    max-width: 100%; /* মোবাইলে পুরো স্ক্রিন জুড়ে দেখানোর জন্য ১০০% করা হলো */
+    max-width: 100%;
     min-height: 100vh;
     margin: 0;
     background: #f2f8f4;
@@ -25,7 +26,7 @@
 
 @media (min-width: 480px) {
     .pf {
-        max-width: 450px; /* ডেক্সটপ বা বড় স্ক্রিনে গেলে এটি অটোমেটিক ফোনের মতো ফ্রেমে চলে আসবে */
+        max-width: 450px;
         min-height: 740px;
         margin: 20px auto;
         border-radius: 36px;
