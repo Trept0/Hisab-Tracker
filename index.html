@@ -56,18 +56,21 @@
     flex:1;
     overflow-y:auto;
     padding:13px;
-    padding-bottom:20px;
+    padding-bottom:15px;
     -webkit-overflow-scrolling: touch;
   }
   
-  /* বটম নেভিগেশন স্টিকি ও ফিক্সড করা হলো */
+  /* বটম ট্যাব বার একদম নিচে লক করা হলো (ফাঁকা অংশ দূর করার জন্য ফিক্স) */
   .bnav{
     background:#fff;
     border-top:0.5px solid #a3e0be;
     display:flex;
     flex-shrink:0;
-    padding:8px 0 12px;
-    position: relative;
+    padding:10px 0 14px;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     z-index: 10;
   }
   .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:4px 0;color:#6b9c7e;}
@@ -138,7 +141,6 @@
   .back-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
   .chart-container {position: relative; margin: auto; height: 160px; width: 160px; margin-bottom: 10px;}
   
-  /* প্রিন্ট ও রিপোর্টের জন্য স্পেশাল ডিজাইন পপআপ */
   .pmo { position: absolute; top:0; left:0; right:0; bottom:0; background:#fff; z-index:200; display:flex; flex-direction:column; padding:15px; overflow-y:auto; }
   .p-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 20px;}
   .p-table th, .p-table td { border: 1px solid #a3e0be; padding: 7px 5px; text-align: left; font-size: 11px; color:#1a3a2a; }
@@ -343,7 +345,6 @@ function rBackup(){
   <div class="card"><div class="ct" style="color:#c0392b;">সব ডেটা মুছুন</div><button class="sbtn red" id="clearBtn">মুছে ফেলুন</button></div>`;
 }
 
-// মোবাইল ফ্রেন্ডলি ইন-অ্যাপ প্রিন্ট ও প্রিভিউ উইন্ডো
 function openPrintOverlay() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const monthlyExpenses = S.expenses.filter(e => e.date.startsWith(currentMonth));
