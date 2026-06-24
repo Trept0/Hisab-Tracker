@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>হিসাব ট্র্যাকার প্রো</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,34 +17,35 @@
     --blue-bg:#dbeeff;--blue-text:#0c447c;
     --purple-bg:#eeedfe;--purple-text:#26215c;
   }
-  body {
+  html, body {
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
     background: #f2f8f4;
     font-family: Arial, sans-serif;
-    height: 100vh;
-    height: 100dvh;
+    overflow: hidden;
   }
   
-  /* মেইন অ্যাপ কন্টেইনার ফিক্স - dvh ব্যবহার করা হয়েছে মোবাইল ব্রাউজার বারের জন্য */
+  /* মেইন অ্যাপ ফ্রেম ফিক্স - বটম ফাকা অংশ দূর করার জন্য পুরোপুরি ফিক্সড হাইট লেআউট */
   .pf{
     width:100%;
     max-width:100%;
-    height:100vh;
-    height:100dvh;
-    margin:0 auto;
-    background:#f2f8f4;
-    display:flex;
-    flex-direction:column;
-    position:relative;
-    overflow:hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #f2f8f4;
+    position: relative;
+    overflow: hidden;
   }
   
   @media (min-width: 480px) {
     body {
       background: #eef5f0;
-      padding: 20px 0;
-      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
     }
     .pf {
       max-width:450px;
@@ -55,7 +56,7 @@
     }
   }
   
-  .sb{background:var(--header-bg);color:var(--header-text);padding:10px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
+  .sb{background:var(--header-bg);color:var(--header-text);padding:12px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
   .ah{background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
   .ah h1{font-size:17px;font-weight:500;color:var(--header-text);}
   .ah p{font-size:12px;color:var(--header-sub);margin-top:2px;}
@@ -64,22 +65,20 @@
     flex:1;
     overflow-y:auto;
     padding:13px;
-    padding-bottom:15px;
+    padding-bottom:20px;
     -webkit-overflow-scrolling: touch;
   }
   
-  /* বটম নেভিগেশন বার - একদম স্ক্রিনের নিচে লেগে থাকার জন্য ফিক্স */
+  /* বটম নেভিগেশন বার - একদম স্ক্রিনের নিচে চুইংগামের মতো লেগে থাকবে */
   .bnav{
     background:#fff;
     border-top:0.5px solid #a3e0be;
     display:flex;
     flex-shrink:0;
-    padding:10px 0 calc(10px + env(safe-area-inset-bottom, 0px)); /* আইফোন বা ফুল-স্ক্রিন মোবাইলের নিচের এক্সট্রা স্পেস হ্যান্ডেল করার জন্য */
+    padding:10px 0 calc(10px + env(safe-area-inset-bottom, 0px));
     width: 100%;
     z-index: 10;
-    margin-top: auto;
   }
-  
   .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:4px 0;color:#6b9c7e;outline:none;}
   .nb.active{color:var(--accent);}
   .nb i{font-size:21px;}
@@ -91,12 +90,18 @@
   .fl{font-size:12px;font-weight:500;color:#3d7a58;margin-bottom:4px;display:block;}
   .fi{width:100%;padding:9px 11px;font-size:13px;border:0.5px solid #a3e0be;border-radius:8px;background:#f0faf4;outline:none;color:#1a3a2a;}
   .fi:focus{border-color:var(--accent);}
+  
+  /* ইনপুট গ্রিড ও বাটন লেআউট */
   .fr{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .cat-box { display: flex; gap: 6px; align-items: flex-end; }
+  .add-cat-btn { padding: 9px 8px; font-size: 11px; background: #d1f0de; border: 0.5px solid #a3e0be; color: var(--g700); border-radius: 8px; cursor: pointer; white-space: nowrap; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: bold;}
+  
   .sbtn{width:100%;padding:10px;font-size:13px;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;}
   .sbtn:active{opacity:.85;transform:scale(.98);}
   .sbtn.red{background:#c0392b;}
   .sbtn.amber{background:#c47700;}
   .sbtn.outline{background:transparent;border:1px solid var(--accent);color:var(--accent);}
+  
   .li{background:#fff;border-radius:12px;border:0.5px solid #a3e0be;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
   .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
   .ic.expense{background:var(--red-bg);color:var(--red-dark);}
@@ -111,12 +116,14 @@
   .ia.give{color:var(--amber-dark);}
   .db{background:none;border:none;cursor:pointer;padding:4px;color:#6b9c7e;font-size:15px;border-radius:6px;flex-shrink:0;}
   .db:hover{background:var(--red-bg);color:var(--red-dark);}
+  
   .sh{font-size:12px;font-weight:500;color:#3d7a58;padding:4px 0 8px;display:flex;align-items:center;gap:6px;}
   .dv{height:0.5px;background:#a3e0be;margin:10px 0;}
   .netbar{display:flex;justify-content:space-between;align-items:center;background:var(--header-bg);border-radius:12px;padding:13px 15px;margin-bottom:10px;color:#fff;}
   .nb-label{font-size:11px;color:var(--header-sub);}
   .nb-val{font-size:20px;font-weight:500;}
   .nb-sub{font-size:11px;color:var(--header-sub);margin-top:2px;}
+  
   .stat2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;}
   .sc{border-radius:11px;padding:11px 10px;text-align:center;}
   .sc.g{background:#d1f0de;} .sc.g .sl{color:var(--g600);} .sc.g .sv{color:var(--g800);}
@@ -124,6 +131,7 @@
   .sc.b{background:var(--blue-bg);} .sc.b .sl{color:#1a5fa3;} .sc.b .sv{color:var(--blue-text);}
   .sl{font-size:10px;font-weight:500;margin-bottom:4px;}
   .sv{font-size:15px;font-weight:500;}
+  
   .ac{background:#fff;border-radius:13px;border:0.5px solid #a3e0be;padding:12px 13px;margin-bottom:9px;display:flex;align-items:center;gap:11px;}
   .alo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
   .an{font-size:13px;font-weight:500;color:#1a3a2a;}
@@ -131,21 +139,18 @@
   .ab{font-size:15px;font-weight:500;color:var(--g800);}
   .eb{background:none;border:none;cursor:pointer;color:#6b9c7e;font-size:15px;padding:4px;border-radius:6px;flex-shrink:0;}
   .eb:hover{color:var(--accent);background:#d1f0de;}
+  
   .ttog{display:grid;grid-template-columns:1fr 1fr;border:0.5px solid #a3e0be;border-radius:8px;overflow:hidden;}
   .tbtn{padding:9px 4px;font-size:12px;font-weight:500;border:none;cursor:pointer;background:#f0faf4;color:#6b9c7e;}
   .tbtn.tr{background:#d1f0de;color:var(--g700);}
   .tbtn.tg{background:var(--amber-bg);color:var(--amber-text);}
   .es{text-align:center;padding:18px 0;color:#6b9c7e;font-size:13px;}
+  
   .mo{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;}
   .mb{background:#fff;border-radius:16px;padding:18px;width:320px;max-width:92%;}
   .mt{font-size:15px;font-weight:500;color:#1a3a2a;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
   .mc{background:none;border:none;cursor:pointer;font-size:18px;color:#6b9c7e;}
-  .wallet-row{display:flex;align-items:center;gap:10px;background:#d1f0de;border-radius:12px;padding:11px 14px;margin-bottom:10px;}
-  .wr-icon{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--g700);flex-shrink:0;}
-  .wr-info{flex:1;}
-  .wr-name{font-size:13px;font-weight:500;color:var(--g800);}
-  .wr-type{font-size:11px;color:var(--g600);}
-  .wr-bal{font-size:17px;font-weight:500;color:var(--g800);}
+  
   .back-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
   .chart-container {position: relative; margin: auto; height: 160px; width: 160px; margin-bottom: 10px;}
   
@@ -188,7 +193,10 @@ const ACCTS=[
   {id:'islami',name:'Islami Bank',type:'ব্যাংক',bg:'#d1f0de',tc:'#155c38',icon:'ti-building-bank',balance:12500},
   {id:'prime', name:'Prime Bank',type:'ব্যাংক',bg:'#eeedfe',tc:'#26215c',icon:'ti-building-bank',balance:7800},
 ];
-const CATS={খাবার:'ti-bowl',যাতায়াত:'ti-bus',শিক্ষা:'ti-book','বিদ্যুৎ/গ্যাস':'ti-bolt',চিকিৎসা:'ti-stethoscope',বিনোদন:'ti-device-tv',পোশাক:'ti-shirt',অন্যান্য:'ti-dots'};
+
+// ডিফল্ট খরচের খাতসমূহ
+const DEFAULT_CATS = ['খাবার', 'যাতায়াত', 'শিক্ষা', 'বিদ্যুৎ/গ্যাস', 'চিকিৎসা', 'বিনোদন', 'পোশাক', 'অন্যান্য'];
+const CAT_ICONS = {খাবার:'ti-bowl',যাতায়াত:'ti-bus',শিক্ষা:'ti-book','বিদ্যুৎ/গ্যাস':'ti-bolt',চিকিৎসা:'ti-stethoscope',বিনোদন:'ti-device-tv',পোশাক:'ti-shirt',অন্যান্য:'ti-dots'};
 
 function loadState(){
   try{const s=localStorage.getItem('hisab_state');if(s) return JSON.parse(s);}catch(e){}
@@ -200,11 +208,13 @@ function loadState(){
       {id:3,amount:1500,category:'শিক্ষা',date:getTodayDate(),desc:'কোচিং ফি',acct:'islami'},
     ],
     debts:[],
+    customCategories: [], // ইউজার যদি নিজে কোনো খাত যোগ করে তার ডাটাবেজ
     nextId:10,activeTab:'dashboard',debtType:'receive',editingAcct:null,showModal:false
   };
 }
 
 let S=loadState();
+if(!S.customCategories) S.customCategories = [];
 
 function getTodayDate() {
   const today = new Date();
@@ -224,6 +234,11 @@ function totRecv(){return S.debts.filter(d=>d.type==='receive').reduce((s,d)=>s+
 function totPay(){return S.debts.filter(d=>d.type==='give').reduce((s,d)=>s+Number(d.amount),0);}
 function acctName(id){const a=S.accounts.find(a=>a.id===id);return a?a.name:'?';}
 function wallet(){return S.accounts.find(a=>a.id==='wallet');}
+
+// সকল খাত একসাথে পাওয়ার ফাংশন
+function getAllCategories() {
+  return [...DEFAULT_CATS, ...S.customCategories];
+}
 
 function sw(tab){
   S.activeTab=tab;S.showModal=false;save();
@@ -322,16 +337,28 @@ function rAccts(){
 }
 
 function rExp(){
+  const allCats = getAllCategories();
   return `<div class="card">
     <div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন খরচ</div>
     <div class="fr"><div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="eAmt" placeholder="০"></div>
     <div class="fg"><label class="fl">তারিখ</label><input class="fi" type="date" id="eDate" value="${getTodayDate()}"></div></div>
-    <div class="fr"><div class="fg"><label class="fl">খাত</label><select class="fi" id="eCat">${Object.keys(CATS).map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
-    <div class="fg"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div></div>
+    
+    <div class="fr">
+      <div class="fg">
+        <label class="fl">খাত</label>
+        <div class="cat-box">
+          <select class="fi" id="eCat" style="flex:1;">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
+          <button class="add-cat-btn" id="addNewCatBtn" title="নতুন খাত যুক্ত করুন">➕ নতুন খাত</button>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct" style="height:38px;">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
+    </div>
+    
     <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="eDesc" placeholder="বিবরণ..."></div>
     <button class="sbtn" id="addExpBtn">যোগ করুন</button></div>
+    
     <div class="sh">সকল খরচের তালিকা</div>
-    ${S.expenses.length===0?'<div class="es">কোনো খরচ নেই</div>':[...S.expenses].reverse().map(e=>`<div class="li"><div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div><div class="ii"><div class="it">${e.category}${e.desc?' — '+e.desc:''}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia expense">${tk(e.amount)}</div><button class="db" data-de="${e.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
+    ${S.expenses.length===0?'<div class="es">কোনো খরচ নেই</div>':[...S.expenses].reverse().map(e=>`<div class="li"><div class="ic expense"><i class="ti ${CAT_ICONS[e.category]||'ti-dots'}" aria-hidden="true"></i></div><div class="ii"><div class="it">${e.category}${e.desc?' — '+e.desc:''}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia expense">${tk(e.amount)}</div><button class="db" data-de="${e.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
 }
 
 function rDebt(){
@@ -443,6 +470,27 @@ function attachEv(){
   const printBtn = document.getElementById('printReportBtn');
   if(printBtn) printBtn.onclick = openPrintOverlay;
 
+  // নতুন খাত যুক্ত করার লজিক
+  const addCatBtn = document.getElementById('addNewCatBtn');
+  if(addCatBtn) {
+    addCatBtn.onclick = () => {
+      const newCatName = prompt('নতুন খরচের খাতের নাম লিখুন (যেমন: বিল, ইন্টারনেট):');
+      if(newCatName && newCatName.trim() !== "") {
+        const trimmed = newCatName.trim();
+        if(getAllCategories().includes(trimmed)) {
+          alert('এই খাতটি ইতিমধ্যেই তালিকায় আছে!');
+          return;
+        }
+        S.customCategories.push(trimmed);
+        save();
+        render();
+        // নতুন খাতটিকে অটোমেটিক সিলেক্ট করে দেওয়া
+        const catSelect = document.getElementById('eCat');
+        if(catSelect) catSelect.value = trimmed;
+      }
+    };
+  }
+
   const ae=document.getElementById('addExpBtn');
   if(ae) ae.onclick=()=>{
     const amt=document.getElementById('eAmt').value;const date=document.getElementById('eDate').value;const cat=document.getElementById('eCat').value;const desc=document.getElementById('eDesc').value.trim();const acct=document.getElementById('eAcct').value;
@@ -468,9 +516,9 @@ function attachEv(){
   
   const expBtn=document.getElementById('exportBtn');if(expBtn)expBtn.onclick=()=>{const blob=new Blob([JSON.stringify(S)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='hisab_backup.json';a.click();};
   const impFile=document.getElementById('importFile');if(impFile){impFile.onchange=()=>{if(impFile.files[0])document.getElementById('fileLabel').textContent=impFile.files[0].name;};}
-  const impBtn=document.getElementById('importBtn');if(impBtn)impBtn.onclick=()=>{const f=impFile.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const p=JSON.parse(ev.target.result);if(p.accounts&&p.expenses){S=p;save();sw('dashboard');}}catch(e){}};r.readAsText(f);};
+  const impBtn=document.getElementById('importBtn');if(impBtn)impBtn.onclick=()=>{const f=impFile.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const p=JSON.parse(ev.target.result);if(p.accounts&&p.expenses){S=p;if(!S.customCategories) S.customCategories=[];save();sw('dashboard');}}catch(e){}};r.readAsText(f);};
   const copyBtn=document.getElementById('copyBtn');if(copyBtn)copyBtn.onclick=()=>{navigator.clipboard.writeText(JSON.stringify(S)).then(()=>alert('কপি হয়েছে'));};
-  const pasteBtn=document.getElementById('pasteBtn');if(pasteBtn)pasteBtn.onclick=()=>{navigator.clipboard.readText().then(txt=>{try{const p=JSON.parse(txt);if(p.accounts){S=p;save();sw('dashboard');}}catch(e){}});};
+  const pasteBtn=document.getElementById('pasteBtn');if(pasteBtn)pasteBtn.onclick=()=>{navigator.clipboard.readText().then(txt=>{try{const p=JSON.parse(txt);if(p.accounts){S=p;if(!S.customCategories) S.customCategories=[];save();sw('dashboard');}}catch(e){}});};
   const clrBtn=document.getElementById('clearBtn');if(clrBtn)clrBtn.onclick=()=>{if(confirm('সব মুছবেন?')){localStorage.removeItem('hisab_state');S=loadState();sw('dashboard');}};
 }
 
