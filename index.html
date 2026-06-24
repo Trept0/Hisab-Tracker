@@ -9,7 +9,6 @@
   <style>
   *{box-sizing:border-box;margin:0;padding:0;}
   
-  /* ডাইনামিক থিম ভেরিয়েবল */
   :root {
     --g50: #f0faf4; --g100: #d1f0de; --g200: #a3e0be; --g400: #3db87a; --g500: #2a9e63; --g600: #1e7a4a; --g700: #155c38; --g800: #0d3f26; --g900: #072918;
     --header-bg: var(--g700); --header-text: var(--g100); --header-sub: #6fcf97;
@@ -21,7 +20,6 @@
     --bg-main: #f2f8f4; --card-bg: #fff; --text-main: #1a3a2a; --border-color: var(--g200);
   }
 
-  /* থিম ক্লাসসমূহ */
   body.theme-blue {
     --g50: #f0f4fa; --g100: #d1e0f0; --g200: #a3c2e0; --g500: #2a639e; --g600: #1e4a7a; --g700: #15385c; --g800: #0d263f;
     --header-sub: #6fa6cf; --bg-main: #f2f5f8; --text-main: #1a273a;
@@ -82,20 +80,17 @@
   .fi:focus{border-color:var(--accent);}
   
   .fr{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
-  .cat-box { display: flex; gap: 6px; align-items: flex-end; }
-  .add-cat-btn { padding: 9px 8px; font-size: 11px; background: var(--g100); border: 0.5px solid var(--border-color); color: var(--text-main); border-radius: 8px; cursor: pointer; white-space: nowrap; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: bold;}
   
   .sbtn{width:100%; padding:10px; font-size:13px; font-weight:500; background:var(--accent); color:#fff; border:none; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:4px;}
   .sbtn:active{opacity:.85; transform:scale(.98);}
   .sbtn.red{background:var(--red-dark);}
   .sbtn.amber{background:var(--amber-dark);}
+  .sbtn.blue{background:var(--g500);}
   .sbtn.outline{background:transparent; border:1px solid var(--accent); color:var(--accent);}
   
   .li{background:var(--card-bg); border-radius:12px; border:0.5px solid var(--border-color); padding:11px 13px; margin-bottom:8px; display:flex; align-items:center; gap:10px;}
   .ic{width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;}
   .ic.expense{background:var(--red-bg); color:var(--red-dark);}
-  .ic.receive{background:var(--g100); color:var(--text-main);}
-  .ic.give{background:var(--amber-bg); color:var(--amber-dark);}
   .ii{flex:1; min-width:0;}
   .it{font-size:13px; font-weight:500; color:var(--text-main);}
   .is{font-size:11px; color:#6b9c7e; margin-top:2px;}
@@ -108,7 +103,6 @@
   
   .sh{font-size:12px; font-weight:500; color:var(--accent-dark); padding:4px 0 8px; display:flex; align-items:center; gap:6px;}
   body.theme-dark .sh{color:#aaa;}
-  .dv{height:0.5px; background:var(--border-color); margin:10px 0;}
   
   .netbar{display:flex; justify-content:space-between; align-items:center; background:var(--header-bg); border-radius:12px; padding:13px 15px; margin-bottom:10px; color:#fff;}
   .nb-label{font-size:11px; color:var(--header-sub);}
@@ -118,15 +112,14 @@
   .stat2{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:10px;}
   .sc{border-radius:11px; padding:11px 10px; text-align:center;}
   .sc.g{background:var(--g100);} .sc.g .sl{color:var(--text-main);} .sc.g .sv{color:var(--text-main);}
+  .sc.r"><div class="sl">মোট খরচ</div><div class="sv"></div></div>
   .sc.r{background:var(--red-bg);} .sc.r .sl{color:#b22222;} .sc.r .sv{color:var(--red-text);}
-  .sc.b{background:var(--blue-bg);} .sc.b .sl{color:#1a5fa3;} .sc.b .sv{color:var(--blue-text);}
   .sl{font-size:10px; font-weight:500; margin-bottom:4px;}
   .sv{font-size:15px; font-weight:500;}
   
   .ac{background:var(--card-bg); border-radius:13px; border:0.5px solid var(--border-color); padding:12px 13px; margin-bottom:9px; display:flex; align-items:center; gap:11px;}
   .alo{width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
   .an{font-size:13px; font-weight:500; color:var(--text-main);}
-  .at{font-size:11px; color:#6b9c7e; margin-top:1px;}
   .ab{font-size:15px; font-weight:500; color:var(--text-main);}
   
   .ttog{display:grid; grid-template-columns:1fr 1fr; border:0.5px solid var(--border-color); border-radius:8px; overflow:hidden;}
@@ -135,23 +128,25 @@
   .tbtn.tg{background:var(--amber-bg); color:var(--amber-text);}
   .es{text-align:center; padding:18px 0; color:#6b9c7e; font-size:13px;}
   
-  .mo{position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:100;}
-  .mb{background:var(--card-bg); border-radius:16px; padding:18px; width:320px; max-width:92%;}
-  .mt{font-size:15px; font-weight:500; color:var(--text-main); margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;}
-  .mc{background:none; border:none; cursor:pointer; font-size:18px; color:#6b9c7e;}
-  
-  .back-row{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;}
   .chart-container {position: relative; margin: auto; height: 160px; width: 160px; margin-bottom: 10px;}
   
-  /* থিম ডট স্টাইল */
-  .theme-selector { display: flex; gap: 12px; justify-content: center; padding: 8px 0; }
-  .tdot { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-  .tdot.active { border-color: var(--text-main); transform: scale(1.1); }
+  /* থিম সুইচার এলিমেন্ট */
+  .theme-selector { display: flex; gap: 14px; justify-content: center; padding: 8px 0; }
+  .tdot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; transition: 0.2s; }
+  .tdot.active { border-color: var(--text-main); transform: scale(1.15); }
   
   /* বাজেট প্রোগ্রেস বার */
   .pbar-bg { width: 100%; height: 8px; background: var(--g100); border-radius: 4px; overflow: hidden; margin-top: 6px; }
   .pbar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
   .pbar-fill.danger { background: var(--red-dark); }
+
+  /* প্রিন্ট স্টাইলিং মিডিয়া কোয়েরি */
+  @media print {
+    body, html, .pf, .body { background: #fff !important; color: #000 !important; overflow: visible !important; height: auto !important; }
+    .bnav, .ah, .bnav, .card:has(#addExpBtn), .card:has(#bAmt), .card:has(#addDebtBtn), .theme-selector, button, input, select, .db, .card:has(input[type="file"]) { display: none !important; }
+    .card { border: 1px solid #ccc !important; page-break-inside: avoid; }
+    .body { padding: 0 !important; }
+  }
   </style>
 </head>
 <body>
@@ -170,7 +165,7 @@
     <button class="nb" onclick="sw('expense')" id="nav-expense"><i class="ti ti-shopping-cart" aria-hidden="true"></i><span>খরচ</span></button>
     <button class="nb" onclick="sw('budget')" id="nav-budget"><i class="ti ti-chart-bar" aria-hidden="true"></i><span>বাজেট</span></button>
     <button class="nb" onclick="sw('debt')" id="nav-debt"><i class="ti ti-users" aria-hidden="true"></i><span>দেনা-পাওনা</span></button>
-    <button class="nb" onclick="sw('backup')" id="nav-backup"><i class="ti ti-database" aria-hidden="true"></i><span>ব্যাকআপ</span></button>
+    <button class="nb" onclick="sw('settings')" id="nav-settings"><i class="ti ti-settings" aria-hidden="true"></i><span>সেটিংস</span></button>
   </div>
 </div>
 
@@ -201,7 +196,7 @@ function loadState(){
     accounts:JSON.parse(JSON.stringify(ACCTS)),
     expenses:[], debts:[], customCategories: [], subCategories: JSON.parse(JSON.stringify(DEFAULT_SUBS)),
     budgets: {}, theme: 'green',
-    nextId:1, activeTab:'dashboard', debtType:'receive', editingAcct:null, showModal:false
+    nextId:1, activeTab:'dashboard', debtType:'receive'
   };
 }
 
@@ -209,8 +204,8 @@ let S = loadState();
 if(!S.subCategories) S.subCategories = JSON.parse(JSON.stringify(DEFAULT_SUBS));
 if(!S.budgets) S.budgets = {};
 if(!S.theme) S.theme = 'green';
+if(!S.customCategories) S.customCategories = [];
 
-// থিম লাইভ লোড করা
 document.body.className = S.theme === 'green' ? '' : 'theme-' + S.theme;
 
 function getTodayDate() {
@@ -233,7 +228,7 @@ function getAllCategories() { return [...DEFAULT_CATS, ...S.customCategories]; }
 function getSubsForCat(cat) { return S.subCategories[cat] || ['সাধারণ']; }
 
 function sw(tab){
-  S.activeTab=tab; S.showModal=false; save();
+  S.activeTab=tab; save();
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('nav-'+tab).classList.add('active');
   const h={
@@ -242,7 +237,7 @@ function sw(tab){
     expense:['খরচের হিসাব','খরচ যোগ করুন ও দেখুন'],
     budget:['বাজেট প্ল্যানার','খাতভিত্তিক মাসিক বাজেট'],
     debt:['দেনা-পাওনা','ধার দেওয়া ও নেওয়ার হিসাব'],
-    backup:['রিপোর্ট ও ব্যাকআপ','ব্যাকআপ ও কাস্টমাইজেশন']
+    settings:['সেটিংস ও কন্ট্রোল প্যানেল','অ্যাপ কাস্টমাইজেশন ও ব্যাকআপ রিপোর্ট']
   };
   document.getElementById('hTitle').textContent=h[tab][0];
   document.getElementById('hSub').textContent=h[tab][1];
@@ -256,7 +251,7 @@ function render(){
   else if(S.activeTab==='expense') b.innerHTML=rExp();
   else if(S.activeTab==='budget') { b.innerHTML=rBudget(); initBudgetChart(); }
   else if(S.activeTab==='debt') b.innerHTML=rDebt();
-  else b.innerHTML=rBackup();
+  else b.innerHTML=rSettings();
   attachEv();
 }
 
@@ -314,17 +309,6 @@ function rDash(){
   <div class="stat2">
     <div class="sc r"><div class="sl">মোট খরচ</div><div class="sv">${tk(totExp())}</div></div>
     <div class="sc g"><div class="sl">হাতে নগদ (মানিব্যাগ)</div><div class="sv">${tk(w?w.balance:0)}</div></div>
-  </div>
-
-  <!-- অ্যাপ থিম সুইচার ইন্টারফেস -->
-  <div class="card" style="text-align:center;">
-    <div class="ct" style="justify-content:center;"><i class="ti ti-palette"></i> অ্যাপের থিম পরিবর্তন করুন</div>
-    <div class="theme-selector">
-      <div class="tdot ${S.theme==='green'?'active':''}" style="background:#2a9e63;" onclick="changeTheme('green')"></div>
-      <div class="tdot ${S.theme==='blue'?'active':''}" style="background:#2a639e;" onclick="changeTheme('blue')"></div>
-      <div class="tdot ${S.theme==='red'?'active':''}" style="background:#9e2a2a;" onclick="changeTheme('red')"></div>
-      <div class="tdot ${S.theme==='dark'?'active':''}" style="background:#333;" onclick="changeTheme('dark')"></div>
-    </div>
   </div>`;
 }
 
@@ -356,17 +340,11 @@ function rExp(){
     <div class="fr">
       <div class="fg">
         <label class="fl">মূল খাত</label>
-        <div class="cat-box">
-          <select class="fi" id="eCat" onchange="updateSubDropdown()">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-          <button class="add-cat-btn" onclick="addCustomCat()">➕ খাত</button>
-        </div>
+        <select class="fi" id="eCat" onchange="updateSubDropdown()">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
       </div>
       <div class="fg">
         <label class="fl">উপখাত</label>
-        <div class="cat-box">
-          <select class="fi" id="eSubCat">${subs.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
-          <button class="add-cat-btn" onclick="addCustomSubCat()">➕ উপখাত</button>
-        </div>
+        <select class="fi" id="eSubCat">${subs.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
       </div>
     </div>
     
@@ -448,13 +426,62 @@ function rDebt(){
   ${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`<div class="li"><div class="ic give"><i class="ti ti-arrow-up-right"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia give">${tk(d.amount)}</div><button class="db" onclick="delDebt(${d.id})"><i class="ti ti-trash"></i></button></div></div>`).join('')}`;
 }
 
-function rBackup(){
+function rSettings(){
+  const allCats = getAllCategories();
   return `
-  <div class="card"><div class="ct">ডেটা ব্যাকআপ (Export)</div><button class="sbtn outline" onclick="exportData()">JSON ডাউনলোড করুন</button></div>
-  <div class="card"><div class="ct" style="color:#c0392b;">সব ডেটা রিসেট করুন</div><button class="sbtn red" onclick="clearAllData()">সব মুছে ফেলুন</button></div>`;
+  <!-- ১. থিম ম্যানেজমেন্ট -->
+  <div class="card" style="text-align:center;">
+    <div class="ct" style="justify-content:center;"><i class="ti ti-palette"></i> অ্যাপের কালার থিম</div>
+    <div class="theme-selector">
+      <div class="tdot ${S.theme==='green'?'active':''}" style="background:#2a9e63;" onclick="changeTheme('green')"></div>
+      <div class="tdot ${S.theme==='blue'?'active':''}" style="background:#2a639e;" onclick="changeTheme('blue')"></div>
+      <div class="tdot ${S.theme==='red'?'active':''}" style="background:#9e2a2a;" onclick="changeTheme('red')"></div>
+      <div class="tdot ${S.theme==='dark'?'active':''}" style="background:#333;" onclick="changeTheme('dark')"></div>
+    </div>
+  </div>
+
+  <!-- ২. প্রিন্ট রিপোর্ট -->
+  <div class="card">
+    <div class="ct"><i class="ti ti-printer"></i> প্রিন্ট এবং পিডিএফ রিপোর্ট</div>
+    <button class="sbtn blue" onclick="window.print()"><i class="ti ti-file-text"></i> রিপোর্ট প্রিন্ট / PDF সেভ করুন</button>
+  </div>
+
+  <!-- ৩. ক্যাটাগরি ও সাব-ক্যাটাগরি কাস্টমাইজেশন -->
+  <div class="card">
+    <div class="ct"><i class="ti ti-category"></i> ম্যানুয়ালি খাত ও উপখাত যোগ করুন</div>
+    <div class="fg">
+      <label class="fl">নতুন মূল খাত</label>
+      <div style="display:flex; gap:6px;">
+        <input class="fi" type="text" id="newCatName" placeholder="উদা: ফ্রিল্যান্সিং">
+        <button class="sbtn" style="width:70px; margin-top:0;" onclick="addCustomCat()">যোগ</button>
+      </div>
+    </div>
+    <div class="fg" style="margin-top:12px;">
+      <label class="fl">মূল খাত নির্বাচন করুন</label>
+      <select class="fi" id="selectParentCat">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
+    </div>
+    <div class="fg">
+      <label class="fl">উক্ত খাতের নতুন উপখাত</label>
+      <div style="display:flex; gap:6px;">
+        <input class="fi" type="text" id="newSubCatName" placeholder="উদা: ক্লায়েন্ট বোনাস">
+        <button class="sbtn amber" style="width:70px; margin-top:0;" onclick="addCustomSubCat()">যোগ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ৪. ডেটা ব্যাকআপ ও রেস্টোর -->
+  <div class="card">
+    <div class="ct"><i class="ti ti-database"></i> ডেটা ব্যাকআপ ও রেস্টোর</div>
+    <button class="sbtn outline" onclick="exportData()"><i class="ti ti-download"></i> ব্যাকআপ ফাইল (JSON) ডাউনলোড করুন</button>
+    <div style="margin-top:12px;">
+      <label class="fl">ব্যাকআপ ফাইল থেকে রেস্টোর করুন</label>
+      <input type="file" id="importFile" accept=".json" style="font-size:12px; margin-top:4px;" onchange="importData(event)">
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:15px;"><div class="ct" style="color:#c0392b;"><i class="ti ti-alert-triangle"></i> সব ডেটা রিসেট করুন</div><button class="sbtn red" onclick="clearAllData()">সব ডেটা মুছে ফেলুন</button></div>`;
 }
 
-// ফাংশনসমূহ ও লজিক কন্ট্রোল
 function updateSubDropdown() {
   const cat = document.getElementById('eCat').value;
   const subSelect = document.getElementById('eSubCat');
@@ -464,25 +491,25 @@ function updateSubDropdown() {
 }
 
 function addCustomCat() {
-  const name = prompt('নতুন মূল খাতের নাম লিখুন:');
-  if(name && name.trim() !== "") {
-    const trimmed = name.trim();
-    if(getAllCategories().includes(trimmed)) return alert('ইতিমধ্যেই আছে!');
-    S.customCategories.push(trimmed); save(); render();
-  }
+  const input = document.getElementById('newCatName');
+  const name = input ? input.value.trim() : "";
+  if(name !== "") {
+    if(getAllCategories().includes(name)) return alert('এই খাতটি ইতিমধ্যেই আছে!');
+    S.customCategories.push(name); save(); render();
+    alert('নতুন মূল খাত সফলভাবে যুক্ত হয়েছে!');
+  } else { alert('খাতের নাম লিখুন!'); }
 }
 
 function addCustomSubCat() {
-  const cat = document.getElementById('eCat').value;
-  const name = prompt(`${cat} খাতের জন্য নতুন উপখাতের নাম লিখুন:`);
-  if(name && name.trim() !== "") {
-    const trimmed = name.trim();
+  const cat = document.getElementById('selectParentCat').value;
+  const input = document.getElementById('newSubCatName');
+  const name = input ? input.value.trim() : "";
+  if(name !== "") {
     if(!S.subCategories[cat]) S.subCategories[cat] = [];
-    if(S.subCategories[cat].includes(trimmed)) return alert('ইতিমধ্যেই আছে!');
-    S.subCategories[cat].push(trimmed); save(); render();
-    document.getElementById('eCat').value = cat; updateSubDropdown();
-    document.getElementById('eSubCat').value = trimmed;
-  }
+    if(S.subCategories[cat].includes(name)) return alert('এই উপখাতটি ইতিমধ্যেই আছে!');
+    S.subCategories[cat].push(name); save(); render();
+    alert(`${cat} খাতে নতুন উপখাত সফলভাবে যুক্ত হয়েছে!`);
+  } else { alert('উপখাতের নাম লিখুন!'); }
 }
 
 function saveBudget() {
@@ -518,7 +545,26 @@ function exportData() {
   a.href = url; a.download = 'hisab_pro_backup.json'; a.click();
 }
 
-function clearAllData() { if(confirm('সব ডাটা ডিলিট করবেন?')){ localStorage.removeItem('hisab_state_v2'); S=loadState(); sw('dashboard'); } }
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedState = JSON.parse(e.target.result);
+      if (importedState && (importedState.expenses || importedState.accounts)) {
+        S = importedState;
+        save();
+        document.body.className = S.theme === 'green' ? '' : 'theme-' + S.theme;
+        sw('dashboard');
+        alert('ডেটা সফলভাবে রেস্টোর করা হয়েছে!');
+      } else { alert('ভুল ফাইল ফরম্যাট!'); }
+    } catch (err) { alert('ফাইলটি পড়া সম্ভব হয়নি, সঠিক JSON ফাইল আপলোড করুন।'); }
+  };
+  reader.readAsText(file);
+}
+
+function clearAllData() { if(confirm('সাবধান! আপনার সব জমানো হিসাব মুছে যাবে। ডিলিট করবেন?')){ localStorage.removeItem('hisab_state_v2'); S=loadState(); sw('dashboard'); } }
 
 function attachEv(){
   const ae=document.getElementById('addExpBtn');
@@ -526,7 +572,7 @@ function attachEv(){
     const amt=document.getElementById('eAmt').value; const date=document.getElementById('eDate').value;
     const cat=document.getElementById('eCat').value; const sub=document.getElementById('eSubCat').value;
     const desc=document.getElementById('eDesc').value.trim(); const acct=document.getElementById('eAcct').value;
-    if(!amt||Number(amt)<=0) return;
+    if(!amt||Number(amt)<=0) return alert('সঠিক পরিমাণ লিখুন!');
     S.expenses.push({id:S.nextId++, amount:Number(amt), category:cat, subCategory:sub, date:date||getTodayDate(), desc, acct});
     const ai=S.accounts.findIndex(a=>a.id===acct); if(ai>-1) S.accounts[ai].balance=Math.max(0, S.accounts[ai].balance-Number(amt));
     save(); render();
@@ -535,7 +581,7 @@ function attachEv(){
   const ad=document.getElementById('addDebtBtn');
   if(ad) ad.onclick=()=>{
     const name=document.getElementById('dName').value.trim(); const amt=document.getElementById('dAmt').value; const desc=document.getElementById('dDesc').value.trim();
-    if(!name||!amt||Number(amt)<=0) return;
+    if(!name||!amt||Number(amt)<=0) return alert('সঠিক তথ্য দিন!');
     S.debts.push({id:S.nextId++, name, amount:Number(amt), type:S.debtType, desc});
     save(); render();
   };
