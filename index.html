@@ -23,11 +23,10 @@
     background: #f2f8f4;
     font-family: Arial, sans-serif;
   }
-  /* ফুল অ্যাপ ফিক্সড লেআউট */
   .pf{
     width:100%;
     max-width:100%;
-    height:100vh; /* স্ক্রিনের সমান হাইট */
+    height:100vh;
     margin:0 auto;
     background:#f2f8f4;
     display:flex;
@@ -53,16 +52,24 @@
   .ah h1{font-size:17px;font-weight:500;color:var(--header-text);}
   .ah p{font-size:12px;color:var(--header-sub);margin-top:2px;}
   
-  /* শুধুমাত্র এই অংশটুকু স্ক্রল হবে, ফলে পেজ কাটার ভয় নেই */
   .body{
     flex:1;
     overflow-y:auto;
     padding:13px;
-    padding-bottom:30px;
+    padding-bottom:20px;
     -webkit-overflow-scrolling: touch;
   }
   
-  .bnav{background:#fff;border-top:0.5px solid #a3e0be;display:flex;flex-shrink:0;padding:7px 0 11px;}
+  /* বটম নেভিগেশন স্টিকি ও ফিক্সড করা হলো */
+  .bnav{
+    background:#fff;
+    border-top:0.5px solid #a3e0be;
+    display:flex;
+    flex-shrink:0;
+    padding:8px 0 12px;
+    position: relative;
+    z-index: 10;
+  }
   .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:4px 0;color:#6b9c7e;}
   .nb.active{color:var(--accent);}
   .nb i{font-size:21px;}
@@ -129,18 +136,13 @@
   .wr-type{font-size:11px;color:var(--g600);}
   .wr-bal{font-size:17px;font-weight:500;color:var(--g800);}
   .back-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
-  .chart-container {position: relative; margin: auto; height: 180px; width: 180px; margin-bottom: 15px;}
+  .chart-container {position: relative; margin: auto; height: 160px; width: 160px; margin-bottom: 10px;}
   
-  /* প্রিন্ট স্টাইল (শুধুমাত্র যখন প্রিন্ট উইন্ডো খুলবে) */
-  @media print {
-    body * { visibility: hidden; }
-    #printSection, #printSection * { visibility: visible; }
-    #printSection { position: absolute; left: 0; top: 0; width: 100%; color: #000; background: #fff; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #333; padding: 8px; text-align: left; font-size: 14px; }
-    th { background-color: #f2f2f2; }
-    .print-hdr { text-align: center; margin-bottom: 20px; }
-  }
+  /* প্রিন্ট ও রিপোর্টের জন্য স্পেশাল ডিজাইন পপআপ */
+  .pmo { position: absolute; top:0; left:0; right:0; bottom:0; background:#fff; z-index:200; display:flex; flex-direction:column; padding:15px; overflow-y:auto; }
+  .p-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 20px;}
+  .p-table th, .p-table td { border: 1px solid #a3e0be; padding: 7px 5px; text-align: left; font-size: 11px; color:#1a3a2a; }
+  .p-table th { background-color: #d1f0de; color:#155c38; font-weight:600; }
   </style>
 </head>
 <body>
@@ -165,8 +167,6 @@
     <button class="nb" onclick="sw('backup')" id="nav-backup"><i class="ti ti-database" aria-hidden="true"></i><span>ব্যাকআপ</span></button>
   </div>
 </div>
-
-<div id="printSection" style="display:none;"></div>
 
 <script>
 let myChart = null;
@@ -246,18 +246,15 @@ function initChart() {
   const totalBalance = totBal();
   const totalExpense = totExp();
   
-  // যদি কোনো ডেটাই না থাকে, চার্ট ফাঁকা দেখাবে না
   if(totalBalance === 0 && totalExpense === 0) {
     document.querySelector('.chart-container').style.display = 'none';
     return;
-  } else {
-    document.querySelector('.chart-container').style.display = 'block';
   }
 
   myChart = new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['মোট ব্যালেন্স', 'মোট খরচ'],
+      labels: ['ব্যালেন্স', 'খরচ'],
       datasets: [{
         data: [totalBalance, totalExpense],
         backgroundColor: ['#2a9e63', '#c0392b'],
@@ -266,9 +263,8 @@ function initChart() {
     },
     options: {
       responsive: true,
-      plugins: {
-        legend: { display: false }
-      }
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } }
     }
   });
 }
@@ -284,7 +280,7 @@ function rDash(){
   <div class="card" style="display:flex; flex-direction:column; align-items:center; padding: 10px;">
     <div class="ct" style="width:100%; text-align:left;"><i class="ti ti-chart-pie"></i> খরচের পাই চার্ট</div>
     <div class="chart-container"><canvas id="pieChart"></canvas></div>
-    <div style="display:flex; gap:15px; font-size:12px;">
+    <div style="display:flex; gap:15px; font-size:11px;">
        <span style="color:#2a9e63">● ব্যালেন্স: ${tk(totBal())}</span>
        <span style="color:#c0392b">● খরচ: ${tk(totExp())}</span>
     </div>
@@ -302,10 +298,6 @@ function rDash(){
         <div style="flex:1;font-size:12px;color:#1a3a2a;">${a.name}</div>
         <div style="font-size:12px;font-weight:500;color:#155c38;">${tk(a.balance)}</div>
       </div>`).join('')}
-  </div>
-  <div class="card">
-    <div class="ct"><i class="ti ti-shopping-cart" aria-hidden="true"></i> সাম্প্রতিক খরচ</div>
-    ${rec.length?rec.map(e=>`<div class="li" style="padding:7px 10px; margin-bottom:5px;"><div class="ic expense" style="width:28px; height:28px; font-size:14px;"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div><div class="ii"><div class="it" style="font-size:12px;">${e.category}</div><div class="is" style="font-size:10px;">${e.date}</div></div><div class="ia expense" style="font-size:12px;">${tk(e.amount)}</div></div>`).join(''):'<div class="es">কোনো খরচ নেই</div>'}
   </div>`;
 }
 
@@ -328,21 +320,21 @@ function rExp(){
     <div class="fg"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div></div>
     <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="eDesc" placeholder="বিবরণ..."></div>
     <button class="sbtn" id="addExpBtn">যোগ করুন</button></div>
-    <div class="sh">সকল খরচের তালিকা (${S.expenses.length}টি)</div>
+    <div class="sh">সকল খরচের তালিকা</div>
     ${S.expenses.length===0?'<div class="es">কোনো খরচ নেই</div>':[...S.expenses].reverse().map(e=>`<div class="li"><div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div><div class="ii"><div class="it">${e.category}${e.desc?' — '+e.desc:''}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia expense">${tk(e.amount)}</div><button class="db" data-de="${e.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
 }
 
 function rDebt(){
   const recv=S.debts.filter(d=>d.type==='receive');const pay=S.debts.filter(d=>d.type==='give');
-  return `<div class="card"><div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন হিসাব</div><div class="fg"><label class="fl">ব্যত্রের নাম</label><input class="fi" type="text" id="dName" placeholder="নাম..."></div><div class="fr"><div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="dAmt" placeholder="০"></div><div class="fg"><label class="fl">ধরন</label><div class="ttog"><button class="tbtn ${S.debtType==='receive'?'tr':''}" id="tRecv">পাব</button><button class="tbtn ${S.debtType==='give'?'tg':''}" id="tGive">দেব</button></div></div></div><div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="dDesc" placeholder="বিবরণ..."></div><button class="sbtn ${S.debtType==='give'?'amber':''}" id="addDebtBtn">যোগ করুন</button></div><div class="sh" style="color:#1e7a4a;">আমি পাব — ${tk(totRecv())}</div>${recv.length===0?'<div class="es">কেউ পাওনা নেই</div>':recv.map(d=>`<div class="li"><div class="ic receive"><i class="ti ti-arrow-down-left" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia receive">${tk(d.amount)}</div><button class="db" data-dd="${d.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}<div class="dv"></div><div class="sh" style="color:#c47700;">আমি দেব — ${tk(totPay())}</div>${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`<div class="li"><div class="ic give"><i class="ti ti-arrow-up-right" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia give">${tk(d.amount)}</div><button class="db" data-dd="${d.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
+  return `<div class="card"><div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন হিসাব</div><div class="fg"><label class="fl">ব্যক্তির নাম</label><input class="fi" type="text" id="dName" placeholder="নাম..."></div><div class="fr"><div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="dAmt" placeholder="০"></div><div class="fg"><label class="fl">ধরন</label><div class="ttog"><button class="tbtn ${S.debtType==='receive'?'tr':''}" id="tRecv">পাব</button><button class="tbtn ${S.debtType==='give'?'tg':''}" id="tGive">দেব</button></div></div></div><div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="dDesc" placeholder="বিবরণ..."></div><button class="sbtn ${S.debtType==='give'?'amber':''}" id="addDebtBtn">যোগ করুন</button></div><div class="sh" style="color:#1e7a4a;">আমি পাব — ${tk(totRecv())}</div>${recv.length===0?'<div class="es">কেউ পাওনা নেই</div>':recv.map(d=>`<div class="li"><div class="ic receive"><i class="ti ti-arrow-down-left" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia receive">${tk(d.amount)}</div><button class="db" data-dd="${d.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}<div class="dv"></div><div class="sh" style="color:#c47700;">আমি দেব — ${tk(totPay())}</div>${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`<div class="li"><div class="ic give"><i class="ti ti-arrow-up-right" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia give">${tk(d.amount)}</div><button class="db" data-dd="${d.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
 }
 
 function rBackup(){
   return `
   <div class="card" style="border: 1px solid #155c38; background: #f0faf4;">
-    <div class="ct" style="color:#155c38;"><i class="ti ti-printer"></i> মাসিক খরচের রিপোর্ট প্রিন্ট</div>
-    <p style="font-size:12px; color:#3d7a58; margin-bottom:10px; line-height:1.5;">চলতি মাসের যাবতীয় খরচ একটি সুন্দর টেবিলে সাজিয়ে প্রিন্ট বা PDF আকারে সেভ করতে নিচের বাটনে চাপুন।</p>
-    <button class="sbtn" id="printReportBtn" style="background:#155c38;"><i class="ti ti-printer"></i> মাসিক রিপোর্ট প্রিন্ট করুন</button>
+    <div class="ct" style="color:#155c38;"><i class="ti ti-printer"></i> মাসিক খরচের রিপোর্ট ও প্রিন্ট</div>
+    <p style="font-size:12px; color:#3d7a58; margin-bottom:10px;">চলতি মাসের হিসাবটি সুন্দর টেবিলে দেখতে এবং মোবাইল দিয়ে প্রিন্ট/PDF সেভ করতে নিচের বাটনে চাপুন।</p>
+    <button class="sbtn" id="printReportBtn" style="background:#155c38;"><i class="ti ti-file-text"></i> রিপোর্ট ওপেন ও প্রিন্ট করুন</button>
   </div>
 
   <div class="card"><div class="ct">ডেটা ব্যাকআপ (Export)</div><button class="sbtn outline" id="exportBtn">JSON ডাউনলোড করুন</button></div>
@@ -351,16 +343,16 @@ function rBackup(){
   <div class="card"><div class="ct" style="color:#c0392b;">সব ডেটা মুছুন</div><button class="sbtn red" id="clearBtn">মুছে ফেলুন</button></div>`;
 }
 
-// রিপোর্ট প্রিন্ট করার ফাংশন
-function printMonthlyReport() {
-  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM ফরম্যাট
+// মোবাইল ফ্রেন্ডলি ইন-অ্যাপ প্রিন্ট ও প্রিভিউ উইন্ডো
+function openPrintOverlay() {
+  const currentMonth = new Date().toISOString().slice(0, 7);
   const monthlyExpenses = S.expenses.filter(e => e.date.startsWith(currentMonth));
   
   let totalMonthlyAmount = 0;
   let tableRows = '';
   
   if(monthlyExpenses.length === 0) {
-    tableRows = `<tr><td colspan="5" style="text-align:center;">চলতি মাসে কোনো খরচের রেকর্ড নেই।</td></tr>`;
+    tableRows = `<tr><td colspan="5" style="text-align:center; padding:15px;">চলতি মাসে কোনো খরচের রেকর্ড নেই।</td></tr>`;
   } else {
     monthlyExpenses.forEach((e, index) => {
       totalMonthlyAmount += Number(e.amount);
@@ -375,37 +367,51 @@ function printMonthlyReport() {
     });
   }
   
-  const printContent = `
-    <div class="print-hdr">
-      <h2>মাসিক খরচের প্রতিবেদন</h2>
-      <p>মাস: ${new Date().toLocaleString('bn-BD', { month: 'long', year: 'numeric' })}</p>
-      <p>মোট জমানো ব্যালেন্স: ৳${totBal().toLocaleString('en-IN')}</p>
+  const ov = document.createElement('div');
+  ov.className = 'pmo';
+  ov.id = 'printOverlay';
+  
+  ov.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #a3e0be; padding-bottom:10px; margin-bottom:15px;">
+      <h3 style="color:#155c38; font-size:15px;">মাসিক খরচের রিপোর্ট</h3>
+      <button id="closePrint" style="background:none; border:none; font-size:20px; color:#c0392b; cursor:pointer;"><i class="ti ti-x"></i></button>
     </div>
-    <table>
+    
+    <div style="text-align:center; margin-bottom:15px;">
+      <h4 style="font-size:14px; color:#1a3a2a;">হিসাব ট্র্যাকার রিপোর্ট</h4>
+      <p style="font-size:11px; color:#6b9c7e;">মাস: ${new Date().toLocaleString('bn-BD', { month: 'long', year: 'numeric' })}</p>
+    </div>
+    
+    <table class="p-table">
       <thead>
         <tr>
-          <th>ক্রমিক</th>
+          <th>নং</th>
           <th>তারিখ</th>
-          <th>খরচের খাত</th>
+          <th>খাত</th>
           <th>বিবরণ</th>
           <th>পরিমাণ</th>
         </tr>
       </thead>
       <tbody>
         ${tableRows}
-        <tr style="font-weight:bold; background:#f2f2f2;">
-          <td colspan="4" style="text-align:right;">সর্বমোট খরচ:</td>
+        <tr style="font-weight:bold; background:#f0faf4;">
+          <td colspan="4" style="text-align:right;">সর্বমোট:</td>
           <td>৳${totalMonthlyAmount.toLocaleString('en-IN')}</td>
         </tr>
       </tbody>
     </table>
+    
+    <div style="display:flex; gap:10px; margin-top:auto; padding-top:10px;">
+      <button class="sbtn" id="triggerPrint" style="flex:1; margin:0;"><i class="ti ti-printer"></i> মোবাইল প্রিন্ট / PDF</button>
+    </div>
   `;
   
-  const printDiv = document.getElementById('printSection');
-  printDiv.innerHTML = printContent;
+  document.getElementById('app').appendChild(ov);
   
-  // প্রিন্ট কমান্ড চালানো
-  window.print();
+  document.getElementById('closePrint').onclick = () => ov.remove();
+  document.getElementById('triggerPrint').onclick = () => {
+    window.print();
+  };
 }
 
 function showModal(){
@@ -426,7 +432,7 @@ function attachEv(){
   document.querySelectorAll('[data-edit]').forEach(b=>{b.onclick=()=>{S.editingAcct=b.getAttribute('data-edit');S.showModal=true;showModal();};});
   
   const printBtn = document.getElementById('printReportBtn');
-  if(printBtn) printBtn.onclick = printMonthlyReport;
+  if(printBtn) printBtn.onclick = openPrintOverlay;
 
   const ae=document.getElementById('addExpBtn');
   if(ae) ae.onclick=()=>{
