@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>হিসাব ট্র্যাকার</title>
-  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-
   <style>
   *{box-sizing:border-box;margin:0;padding:0;}
   :root{
@@ -18,14 +16,11 @@
     --blue-bg:#dbeeff;--blue-text:#0c447c;
     --purple-bg:#eeedfe;--purple-text:#26215c;
   }
-  
   body {
     margin: 0;
     padding: 0;
     background: #f2f8f4;
   }
-
-  /* মোবাইলের জন্য ১০০% ফুল-স্ক্রিন রেসপনসিভ এবং ডেস্কটপের জন্য ফ্রেম লেআউট */
   .pf{
     width:100%;
     max-width:100%;
@@ -38,7 +33,6 @@
     font-family:var(--font-sans);
     position:relative;
   }
-  
   @media (min-width: 480px) {
     body {
       background: #eef5f0;
@@ -52,7 +46,6 @@
       box-shadow:0 10px 30px rgba(21,92,56,0.1);
     }
   }
-  
   .sb{background:var(--header-bg);color:var(--header-text);padding:10px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
   .ah{background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
   .ah h1{font-size:17px;font-weight:500;color:var(--header-text);}
@@ -107,7 +100,7 @@
   .sc.p{background:var(--purple-bg);} .sc.p .sl{color:#4a1db7;} .sc.p .sv{color:var(--purple-text);}
   .sl{font-size:10px;font-weight:500;margin-bottom:4px;}
   .sv{font-size:15px;font-weight:500;}
-  .tt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+  .tt style{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
   .ac{background:#fff;border-radius:13px;border:0.5px solid #a3e0be;padding:12px 13px;margin-bottom:9px;display:flex;align-items:center;gap:11px;}
   .alo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
   .an{font-size:13px;font-weight:500;color:#1a3a2a;}
@@ -134,7 +127,6 @@
   </style>
 </head>
 <body>
-
 <div class="pf" id="app">
   <div class="sb">
     <span>৯:৪১ AM</span>
@@ -153,7 +145,6 @@
     <button class="nb" onclick="sw('backup')" id="nav-backup"><i class="ti ti-database" aria-hidden="true"></i><span>ব্যাকআপ</span></button>
   </div>
 </div>
-
 <script>
 const ACCTS=[
   {id:'wallet',name:'মানিব্যাগ',type:'নগদ',bg:'#d1f0de',tc:'#0d3f26',icon:'ti-wallet',balance:1500},
@@ -164,12 +155,8 @@ const ACCTS=[
   {id:'prime', name:'Prime Bank',type:'ব্যাংক',bg:'#eeedfe',tc:'#26215c',icon:'ti-building-bank',balance:7800},
 ];
 const CATS={খাবার:'ti-bowl',যাতায়াত:'ti-bus',শিক্ষা:'ti-book','বিদ্যুৎ/গ্যাস':'ti-bolt',চিকিৎসা:'ti-stethoscope',বিনোদন:'ti-device-tv',পোশাক:'ti-shirt',অন্যান্য:'ti-dots'};
-
 function loadState(){
-  try{
-    const s=localStorage.getItem('hisab_state');
-    if(s) return JSON.parse(s);
-  }catch(e){}
+  try{const s=localStorage.getItem('hisab_state');if(s) return JSON.parse(s);}catch(e){}
   return {
     accounts:JSON.parse(JSON.stringify(ACCTS)),
     expenses:[
@@ -185,13 +172,8 @@ function loadState(){
     nextId:10,activeTab:'dashboard',debtType:'receive',editingAcct:null,showModal:false
   };
 }
-
 let S=loadState();
-
-function save(){
-  try{localStorage.setItem('hisab_state',JSON.stringify(S));}catch(e){}
-}
-
+function save(){try{localStorage.setItem('hisab_state',JSON.stringify(S));}catch(e){}}
 function tk(n){return '৳'+Math.round(Number(n)).toLocaleString('en-IN');}
 function totBal(){return S.accounts.reduce((s,a)=>s+Number(a.balance),0);}
 function totExp(){return S.expenses.reduce((s,e)=>s+Number(e.amount),0);}
@@ -199,17 +181,14 @@ function totRecv(){return S.debts.filter(d=>d.type==='receive').reduce((s,d)=>s+
 function totPay(){return S.debts.filter(d=>d.type==='give').reduce((s,d)=>s+Number(d.amount),0);}
 function acctName(id){const a=S.accounts.find(a=>a.id===id);return a?a.name:'?';}
 function wallet(){return S.accounts.find(a=>a.id==='wallet');}
-
 function sw(tab){
   S.activeTab=tab;S.showModal=false;save();
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('nav-'+tab).classList.add('active');
   const h={dashboard:['ড্যাশবোর্ড','আপনার আর্থিক সারসংক্ষেপ'],accounts:['ব্যালেন্স','সকল অ্যাকাউন্টের হিসাব'],expense:['খরচের হিসাব','খরচ যোগ করুন ও দেখুন'],debt:['দেনা-পাওনা','ধার দেওয়া ও নেওয়ার হিসাব'],backup:['ব্যাকআপ ও রিস্টোর','ডেটা সংরক্ষণ করুন']};
-  document.getElementById('hTitle').textContent=h[tab][0];
-  document.getElementById('hSub').textContent=h[tab][1];
+  document.getElementById('hTitle').textContent=h[tab][0];document.getElementById('hSub').textContent=h[tab][1];
   render();
 }
-
 function render(){
   const b=document.getElementById('screenBody');
   if(S.activeTab==='dashboard') b.innerHTML=rDash();
@@ -220,973 +199,103 @@ function render(){
   if(S.showModal) showModal();
   attachEv();
 }
-
 function rDash(){
-  const net=totRecv()-totPay();
-  const w=wallet();
-  const rec=[...S.expenses].slice(-4).reverse();
-  const rdb=[...S.debts].slice(-3).reverse();
+  const net=totRecv()-totPay();const w=wallet();const rec=[...S.expenses].slice(-4).reverse();const rdb=[...S.debts].slice(-3).reverse();
   return `
   <div class="netbar">
-    <div>
-      <div class="nb-label">সকল অ্যাকাউন্ট মিলিয়ে</div>
-      <div class="nb-val" style="color:#a3e0be">${tk(totBal())}</div>
-      <div class="nb-sub">মোট ব্যালেন্স</div>
-    </div>
+    <div><div class="nb-label">সকল অ্যাকাউন্ট মিলিয়ে</div><div class="nb-val" style="color:#a3e0be">${tk(totBal())}</div><div class="nb-sub">মোট ব্যালেন্স</div></div>
     <i class="ti ti-report-money" style="font-size:30px;color:#6fcf97" aria-hidden="true"></i>
   </div>
-
   <div class="wallet-row">
     <div class="wr-icon"><i class="ti ti-wallet" aria-hidden="true"></i></div>
-    <div class="wr-info">
-      <div class="wr-name">মানিব্যাগ (নগদ)</div>
-      <div class="wr-type">হাতে নগদ টাকা</div>
-    </div>
+    <div class="wr-info"><div class="wr-name">মানিব্যাগ (নগদ)</div><div class="wr-type">হাতে নগদ টাকা</div></div>
     <div class="wr-bal">${tk(w?w.balance:0)}</div>
   </div>
-
   <div class="stat2">
     <div class="sc b"><div class="sl">মোট খরচ</div><div class="sv">${tk(totExp())}</div></div>
     <div class="sc p"><div class="sl">নিট পাওনা</div><div class="sv" style="color:${net>=0?'#26215c':'#9b1c1c'}">${tk(Math.abs(net))}</div></div>
     <div class="sc g"><div class="sl">মোট পাব</div><div class="sv">${tk(totRecv())}</div></div>
     <div class="sc a"><div class="sl">মোট দেব</div><div class="sv">${tk(totPay())}</div></div>
   </div>
-
   <div class="card">
     <div class="ct"><i class="ti ti-wallet" aria-hidden="true"></i> সকল অ্যাকাউন্ট</div>
     ${S.accounts.map(a=>`
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
-        <div style="width:30px;height:30px;border-radius:8px;background:${a.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="ti ${a.icon}" style="font-size:14px;color:${a.tc}" aria-hidden="true"></i>
-        </div>
+        <div style="width:30px;height:30px;border-radius:8px;background:${a.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ${a.icon}" style="font-size:14px;color:${a.tc}" aria-hidden="true"></i></div>
         <div style="flex:1;font-size:13px;color:#1a3a2a;">${a.name} <span style="font-size:11px;color:#6b9c7e;">(${a.type})</span></div>
         <div style="font-size:13px;font-weight:500;color:#155c38;">${tk(a.balance)}</div>
       </div>`).join('')}
-    <div style="border-top:0.5px solid #a3e0be;margin-top:4px;padding-top:9px;display:flex;justify-content:space-between;">
-      <span style="font-size:12px;color:#3d7a58;">মোট ব্যালেন্স</span>
-      <span style="font-size:14px;font-weight:500;color:#0d3f26;">${tk(totBal())}</span>
-    </div>
+    <div style="border-top:0.5px solid #a3e0be;margin-top:4px;padding-top:9px;display:flex;justify-content:space-between;"><span style="font-size:12px;color:#3d7a58;">মোট ব্যালেন্স</span><span style="font-size:14px;font-weight:500;color:#0d3f26;">${tk(totBal())}</span></div>
   </div>
-
   <div class="card">
     <div class="ct"><i class="ti ti-shopping-cart" aria-hidden="true"></i> সাম্প্রতিক খরচ</div>
-    ${rec.length?rec.map(e=>`
-      <div class="li" style="padding:9px 11px;">
-        <div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div>
-        <div class="ii"><div class="it">${e.category}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div>
-        <div class="ia expense">${tk(e.amount)}</div>
-      </div>`).join(''):'<div class="es">কোনো খরচ নেই</div>'}
+    ${rec.length?rec.map(e=>`<div class="li" style="padding:9px 11px;"><div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div><div class="ii"><div class="it">${e.category}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div><div class="ia expense">${tk(e.amount)}</div></div>`).join(''):'<div class="es">কোনো খরচ নেই</div>'}
   </div>
-
   <div class="card">
     <div class="ct"><i class="ti ti-users" aria-hidden="true"></i> সাম্প্রতিক দেনা-পাওনা</div>
-    ${rdb.length?rdb.map(d=>`
-      <div class="li" style="padding:9px 11px;">
-        <div class="ic ${d.type}"><i class="ti ${d.type==='receive'?'ti-arrow-down-left':'ti-arrow-up-right'}" aria-hidden="true"></i></div>
-        <div class="ii"><div class="it">${d.name}</div><div class="is">${d.type==='receive'?'আমি পাব':'আমি দেব'}</div></div>
-        <div class="ia ${d.type}">${tk(d.amount)}</div>
-      </div>`).join(''):'<div class="es">কোনো রেকর্ড নেই</div>'}
+    ${rdb.length?rdb.map(d=>`<div class="li" style="padding:9px 11px;"><div class="ic ${d.type}"><i class="ti ${d.type==='receive'?'ti-arrow-down-left':'ti-arrow-up-right'}" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.type==='receive'?'আমি পাব':'আমি দেব'}</div></div><div class="ia ${d.type}">${tk(d.amount)}</div></div>`).join(''):'<div class="es">কোনো রেকর্ড নেই</div>'}
   </div>`;
 }
-
 function rAccts(){
   const grp=(list)=>list.map(a=>`
     <div class="ac">
       <div class="alo" style="background:${a.bg};"><i class="ti ${a.icon}" style="font-size:18px;color:${a.tc}" aria-hidden="true"></i></div>
       <div style="flex:1;min-width:0;"><div class="an">${a.name}</div><div class="at">${a.type}</div></div>
-      <div style="text-align:right;">
-        <div class="ab">${tk(a.balance)}</div>
-        <button class="eb" data-edit="${a.id}" aria-label="ব্যালেন্স আপডেট" style="margin-top:2px;"><i class="ti ti-edit" aria-hidden="true"></i></button>
-      </div>
+      <div style="text-align:right;"><div class="ab">${tk(a.balance)}</div><button class="eb" data-edit="${a.id}"><i class="ti ti-edit" aria-hidden="true"></i></button></div>
     </div>`).join('');
-  return `
-  <div class="card" style="margin-bottom:10px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:13px;color:#3d7a58;">সর্বমোট ব্যালেন্স</span>
-      <span style="font-size:20px;font-weight:500;color:#0d3f26;">${tk(totBal())}</span>
-    </div>
-    <div style="font-size:11px;color:#6b9c7e;margin-top:3px;">৬টি অ্যাকাউন্ট মিলিয়ে</div>
-  </div>
-  <div class="sh"><i class="ti ti-wallet" style="font-size:15px" aria-hidden="true"></i> নগদ</div>
-  ${grp(S.accounts.filter(a=>a.type==='নগদ'))}
-  <div class="sh" style="margin-top:4px;"><i class="ti ti-device-mobile" style="font-size:15px" aria-hidden="true"></i> মোবাইল ব্যাংকিং (MFS)</div>
-  ${grp(S.accounts.filter(a=>a.type==='MFS'))}
-  <div class="sh" style="margin-top:4px;"><i class="ti ti-building-bank" style="font-size:15px" aria-hidden="true"></i> ব্যাংক</div>
-  ${grp(S.accounts.filter(a=>a.type==='ব্যাংক'))}
-  <div style="height:6px;"></div>`;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#3d7a58;">সর্বমোট ব্যালেন্স</span><span style="font-size:20px;font-weight:500;color:#0d3f26;">${tk(totBal())}</span></div></div><div class="sh"><i class="ti ti-wallet" aria-hidden="true"></i> নগদ</div>${grp(S.accounts.filter(a=>a.type==='নগদ'))}<div class="sh"><i class="ti ti-device-mobile" aria-hidden="true"></i> মোবাইল ব্যাংকিং (MFS)</div>${grp(S.accounts.filter(a=>a.type==='MFS'))}<div class="sh"><i class="ti ti-building-bank" aria-hidden="true"></i> ব্যাংক</div>${grp(S.accounts.filter(a=>a.type==='ব্যাংক'))}`;
 }
-
 function rExp(){
-  const cats=Object.keys(CATS);
-  return `
-  <div class="card">
-    <div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন খরচ</div>
-    <div class="fr">
-      <div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="eAmt" placeholder="০" min="0"></div>
-      <div class="fg"><label class="fl">তারিখ</label><input class="fi" type="date" id="eDate"></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label class="fl">খাত</label><select class="fi" id="eCat">${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
-      <div class="fg"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
-    </div>
-    <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="eDesc" placeholder="বিবরণ লিখুন..."></div>
-    <button class="sbtn" id="addExpBtn"><i class="ti ti-plus" aria-hidden="true"></i> খরচ যোগ করুন</button>
-  </div>
-  <div class="sh"><i class="ti ti-list" style="font-size:15px" aria-hidden="true"></i> সকল খরচ (${S.expenses.length}টি) — ${tk(totExp())}</div>
-  ${S.expenses.length===0?'<div class="es"><i class="ti ti-mood-empty" style="font-size:28px;display:block;margin-bottom:6px" aria-hidden="true"></i>কোনো খরচ নেই</div>':
-    [...S.expenses].reverse().map(e=>`
-    <div class="li">
-      <div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div>
-      <div class="ii"><div class="it">${e.category}${e.desc?' — '+e.desc:''}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia expense">${tk(e.amount)}</div>
-        <button class="db" data-de="${e.id}" aria-label="মুছুন"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('')}`;
+  return `<div class="card"><div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন খরচ</div><div class="fr"><div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="eAmt" placeholder="০"></div><div class="fg"><label class="fl">তারিখ</label><input class="fi" type="date" id="eDate"></div></div><div class="fr"><div class="fg"><label class="fl">খাত</label><select class="fi" id="eCat">${Object.keys(CATS).map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div><div class="fg"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div></div><div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="eDesc" placeholder="বিবরণ..."></div><button class="sbtn" id="addExpBtn">যোগ করুন</button></div><div class="sh">সকল খরচ — ${tk(totExp())}</div>${S.expenses.length===0?'<div class="es">কোনো খরচ নেই</div>':[...S.expenses].reverse().map(e=>`<div class="li"><div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div><div class="ii"><div class="it">${e.category}${e.desc?' — '+e.desc:''}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia expense">${tk(e.amount)}</div><button class="db" data-de="${e.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
 }
-
 function rDebt(){
-  const recv=S.debts.filter(d=>d.type==='receive');
-  const pay=S.debts.filter(d=>d.type==='give');
-  const t=S.debtType;
-  return `
-  <div class="card">
-    <div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন হিসাব</div>
-    <div class="fg"><label class="fl">ব্যক্তির নাম</label><input class="fi" type="text" id="dName" placeholder="নাম লিখুন..."></div>
-    <div class="fr">
-      <div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="dAmt" placeholder="০" min="0"></div>
-      <div class="fg"><label class="fl">ধরন</label>
-        <div class="ttog">
-          <button class="tbtn ${t==='receive'?'tr':''}" id="tRecv">আমি পাব</button>
-          <button class="tbtn ${t==='give'?'tg':''}" id="tGive">আমি দেব</button>
-        </div>
-      </div>
-    </div>
-    <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="dDesc" placeholder="বিবরণ লিখুন..."></div>
-    <button class="sbtn ${t==='give'?'amber':''}" id="addDebtBtn"><i class="ti ti-plus" aria-hidden="true"></i> হিসাব যোগ করুন</button>
-  </div>
-  <div class="sh" style="color:#1e7a4a;"><i class="ti ti-arrow-down-left" style="font-size:15px;color:#1e7a4a" aria-hidden="true"></i> আমি পাব (${recv.length}জন) — ${tk(totRecv())}</div>
-  ${recv.length===0?'<div class="es">কেউ পাওনা নেই</div>':recv.map(d=>`
-    <div class="li">
-      <div class="ic receive"><i class="ti ti-arrow-down-left" aria-hidden="true"></i></div>
-      <div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia receive">${tk(d.amount)}</div>
-        <button class="db" data-dd="${d.id}" aria-label="মুছুন"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('')}
-  <div class="dv"></div>
-  <div class="sh" style="color:#c47700;"><i class="ti ti-arrow-up-right" style="font-size:15px;color:#c47700" aria-hidden="true"></i> আমি দেব (${pay.length}জন) — ${tk(totPay())}</div>
-  ${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`
-    <div class="li">
-      <div class="ic give"><i class="ti ti-arrow-up-right" aria-hidden="true"></i></div>
-      <div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia give">${tk(d.amount)}</div>
-        <button class="db" data-dd="${d.id}" aria-label="মুছুন"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('')}`;
+  const recv=S.debts.filter(d=>d.type==='receive');const pay=S.debts.filter(d=>d.type==='give');
+  return `<div class="card"><div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন হিসাব</div><div class="fg"><label class="fl">ব্যক্তির নাম</label><input class="fi" type="text" id="dName" placeholder="নাম..."></div><div class="fr"><div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="dAmt" placeholder="০"></div><div class="fg"><label class="fl">ধরন</label><div class="ttog"><button class="tbtn ${S.debtType==='receive'?'tr':''}" id="tRecv">পাব</button><button class="tbtn ${S.debtType==='give'?'tg':''}" id="tGive">দেব</button></div></div></div><div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="dDesc" placeholder="বিবরণ..."></div><button class="sbtn ${S.debtType==='give'?'amber':''}" id="addDebtBtn">যোগ করুন</button></div><div class="sh" style="color:#1e7a4a;">আমি পাব — ${tk(totRecv())}</div>${recv.length===0?'<div class="es">কেউ পাওনা নেই</div>':recv.map(d=>`<div class="li"><div class="ic receive"><i class="ti ti-arrow-down-left" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia receive">${tk(d.amount)}</div><button class="db" data-dd="${d.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}<div class="dv"></div><div class="sh" style="color:#c47700;">আমি দেব — ${tk(totPay())}</div>${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`<div class="li"><div class="ic give"><i class="ti ti-arrow-up-right" aria-hidden="true"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia give">${tk(d.amount)}</div><button class="db" data-dd="${d.id}"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div>`).join('')}`;
 }
-
 function rBackup(){
-  const dataSize=(JSON.stringify(S).length/1024).toFixed(1);
-  return `
-  <div class="card">
-    <div class="ct"><i class="ti ti-database-export" aria-hidden="true"></i> ডেটা রপ্তানি (Export)</div>
-    <p style="font-size:12px;color:#3d7a58;margin-bottom:12px;line-height:1.6;">আপনার সকল হিসাব একটি JSON ফাইলে ডাউনলোড করুন। পরে এই ফাইল দিয়ে পুনরায় রিস্টোর করতে পারবেন।</p>
-    <div style="background:#f0faf4;border-radius:10px;padding:11px 13px;margin-bottom:12px;display:flex;justify-content:space-between;">
-      <div>
-        <div style="font-size:12px;color:#6b9c7e;">রেকورد সংখ্যা</div>
-        <div style="font-size:14px;font-weight:500;color:#0d3f26;margin-top:2px;">${S.expenses.length}টি খরচ · ${S.debts.length}টি দেনা-পাওনা</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:12px;color:#6b9c7e;">ডেটা সাইজ</div>
-        <div style="font-size:14px;font-weight:500;color:#0d3f26;margin-top:2px;">${dataSize} KB</div>
-      </div>
-    </div>
-    <button class="sbtn" id="exportBtn"><i class="ti ti-download" aria-hidden="true"></i> JSON ফাইল ডাউনলোড করুন</button>
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-database-import" aria-hidden="true"></i> ডেটা আমদানি (Import)</div>
-    <p style="font-size:12px;color:#3d7a58;margin-bottom:12px;line-height:1.6;">আগে ডাউনলোড করা JSON ব্যাকআপ ফাইল আপলোড করুন। সতর্কতা: বর্তমান ডেটা মুছে যাবে।</p>
-    <div style="border:1.5px dashed #a3e0be;border-radius:10px;padding:16px;text-align:center;margin-bottom:12px;background:#f0faf4;">
-      <i class="ti ti-file-upload" style="font-size:28px;color:#3db87a;display:block;margin-bottom:6px" aria-hidden="true"></i>
-      <label for="importFile" style="font-size:13px;color:#1e7a4a;font-weight:500;cursor:pointer;">JSON ফাইল বেছে নিন</label>
-      <input type="file" id="importFile" accept=".json" style="display:none;">
-      <div id="fileLabel" style="font-size:11px;color:#6b9c7e;margin-top:4px;">কোনো ফাইল বাছাই হয়নি</div>
-    </div>
-    <button class="sbtn outline" id="importBtn"><i class="ti ti-database-import" aria-hidden="true"></i> রিস্টোর করুন</button>
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-copy" aria-hidden="true"></i> কেলিপবোর্ড ব্যাকআপ</div>
-    <p style="font-size:12px;color:#3d7a58;margin-bottom:12px;line-height:1.6;">ডেটা কপি করে অন্য জায়গায় (নোটপ্যাড, ইমেইল) সেভ করুন।</p>
-    <div class="back-row">
-      <button class="sbtn" id="copyBtn" style="font-size:12px;"><i class="ti ti-copy" aria-hidden="true"></i> কপি করুন</button>
-      <button class="sbtn outline" id="pasteBtn" style="font-size:12px;"><i class="ti ti-clipboard" aria-hidden="true"></i> পেস্ট করুন</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="ct" style="color:#c0392b;"><i class="ti ti-trash" aria-hidden="true"></i> সব ডেটা মুছুন</div>
-    <p style="font-size:12px;color:#6b9c7e;margin-bottom:12px;line-height:1.6;">সতর্কতা: এটি করলে সকল খরচ ও দেনা-পাওনার রেকর্ড স্থায়ীভাবে মুছে যাবে।</p>
-    <button class="sbtn red" id="clearBtn"><i class="ti ti-alert-triangle" aria-hidden="true"></i> সব ডেটা মুছে ফেলুন</button>
-  </div>`;
+  return `<div class="card"><div class="ct">ডেটা রপ্তানি (Export)</div><button class="sbtn" id="exportBtn">JSON ডাউনলোড করুন</button></div><div class="card"><div class="ct">ডেটা আমদানি (Import)</div><div style="border:1.5px dashed #a3e0be;border-radius:10px;padding:12px;text-align:center;margin-bottom:10px;background:#f0faf4;"><label for="importFile" style="cursor:pointer;font-size:13px;color:#1e7a4a;">JSON ফাইল বেছে নিন</label><input type="file" id="importFile" accept=".json" style="display:none;"><div id="fileLabel" style="font-size:11px;color:#6b9c7e;margin-top:4px;">কোনো ফাইল বাছাই হয়নি</div></div><button class="sbtn outline" id="importBtn">রিস্টোর করুন</button></div><div class="card"><div class="ct">ক্লিপবোর্ড ব্যাকআপ</div><div class="back-row"><button class="sbtn" id="copyBtn">কপি করুন</button><button class="sbtn outline" id="pasteBtn">পেস্ট করুন</button></div></div><div class="card"><div class="ct" style="color:#c0392b;">সব ডেটা মুছুন</div><button class="sbtn red" id="clearBtn">মুছে ফেলুন</button></div>`;
 }
-
 function showModal(){
-  const frame=document.getElementById('app');
-  const a=S.accounts.find(a=>a.id===S.editingAcct);
-  if(!a) return;
-  const old=document.getElementById('editModal');
-  if(old) old.remove();
-  const ov=document.createElement('div');
-  ov.className='mo'; ov.id='editModal';
-  ov.innerHTML=`
-    <div class="mb">
-      <div class="mt">
-        <span>${a.name} — ব্যালেন্স</span>
-        <button class="mc" id="mClose" aria-label="বন্ধ"><i class="ti ti-x" aria-hidden="true"></i></button>
-      </div>
-      <div class="fg"><label class="fl">নতুন ব্যালেন্স (৳)</label>
-        <input class="fi" type="number" id="newBal" value="${a.balance}" min="0" style="font-size:16px;padding:11px;">
-      </div>
-      <button class="sbtn" id="saveBal" style="margin-top:10px;"><i class="ti ti-check" aria-hidden="true"></i> সংরক্ষণ করুন</button>
-    </div>`;
+  const frame=document.getElementById('app');const a=S.accounts.find(a=>a.id===S.editingAcct);if(!a) return;
+  const old=document.getElementById('editModal');if(old) old.remove();
+  const ov=document.createElement('div');ov.className='mo';ov.id='editModal';
+  ov.innerHTML=`<div class="mb"><div class="mt"><span>${a.name} — ব্যালেন্স</span><button class="mc" id="mClose"><i class="ti ti-x"></i></button></div><div class="fg"><label class="fl">নতুন ব্যালেন্স (৳)</label><input class="fi" type="number" id="newBal" value="${a.balance}"></div><button class="sbtn" id="saveBal">সংরক্ষণ করুন</button></div>`;
   frame.appendChild(ov);
   document.getElementById('mClose').onclick=()=>{S.showModal=false;S.editingAcct=null;ov.remove();};
   document.getElementById('saveBal').onclick=()=>{
-    const v=document.getElementById('newBal').value;
-    if(!v||Number(v)<0){alert('সঠিক পরিমাণ লিখুন');return;}
-    const i=S.accounts.findIndex(ac=>ac.id===S.editingAcct);
-    if(i>-1) S.accounts[i].balance=Number(v);
-    S.showModal=false;S.editingAcct=null;
-    ov.remove();save();render();
+    const v=document.getElementById('newBal').value;if(!v||Number(v)<0)return;
+    const i=S.accounts.findIndex(ac=>ac.id===S.editingAcct);if(i>-1)S.accounts[i].balance=Number(v);
+    S.showModal=false;S.editingAcct=null;ov.remove();save();render();
   };
-  document.getElementById('newBal').focus();
 }
-
 function attachEv(){
-  document.querySelectorAll('[data-edit]').forEach(b=>{
-    b.onclick=()=>{S.editingAcct=b.getAttribute('data-edit');S.showModal=true;showModal();};
-  });
-
+  document.querySelectorAll('[data-edit]').forEach(b=>{b.onclick=()=>{S.editingAcct=b.getAttribute('data-edit');S.showModal=true;showModal();};});
   const ae=document.getElementById('addExpBtn');
   if(ae) ae.onclick=()=>{
-    const amt=document.getElementById('eAmt').value;
-    const date=document.getElementById('eDate').value;
-    const cat=document.getElementById('eCat').value;
-    const desc=document.getElementById('eDesc').value.trim();
-    const acct=document.getElementById('eAcct').value;
-    if(!amt||Number(amt)<=0){alert('সঠিক পরিমাণ লিখুন');return;}
-    const d=date||new Date().toISOString().split('T')[0];
-    S.expenses.push({id:S.nextId++,amount:Number(amt),category:cat,date:d,desc,acct});
-    const ai=S.accounts.findIndex(a=>a.id===acct);
-    if(ai>-1) S.accounts[ai].balance=Math.max(0,S.accounts[ai].balance-Number(amt));
+    const amt=document.getElementById('eAmt').value;const date=document.getElementById('eDate').value;const cat=document.getElementById('eCat').value;const desc=document.getElementById('eDesc').value.trim();const acct=document.getElementById('eAcct').value;
+    if(!amt||Number(amt)<=0)return;
+    S.expenses.push({id:S.nextId++,amount:Number(amt),category:cat,date:date||new Date().toISOString().split('T')[0],desc,acct});
+    const ai=S.accounts.findIndex(a=>a.id===acct);if(ai>-1)S.accounts[ai].balance=Math.max(0,S.accounts[ai].balance-Number(amt));
     save();render();
   };
-
   const ad=document.getElementById('addDebtBtn');
   if(ad) ad.onclick=()=>{
-    const name=document.getElementById('dName').value.trim();
-    const amt=document.getElementById('dAmt').value;
-    const desc=document.getElementById('dDesc').value.trim();
-    if(!name){alert('ব্যক্তির নাম লিখুন');return;}
-    if(!amt||Number(amt)<=0){alert('সঠিক পরিমাণ লিখুন');return;}
+    const name=document.getElementById('dName').value.trim();const amt=document.getElementById('dAmt').value;const desc=document.getElementById('dDesc').value.trim();
+    if(!name||!amt||Number(amt)<=0)return;
     S.debts.push({id:S.nextId++,name,amount:Number(amt),type:S.debtType,desc});
     save();render();
   };
-
-  const tr2=document.getElementById('tRecv');
-  const tg2=document.getElementById('tGive');
-  if(tr2) tr2.onclick=()=>{S.debtType='receive';render();};
-  if(tg2) tg2.onclick=()=>{S.debtType='give';render();};
-
-  document.querySelectorAll('[data-de]').forEach(b=>{
-    b.onclick=()=>{
-      if(confirm('এই খরচটি মুছে ফেলবেন?')){
-        const id=Number(b.getAttribute('data-de'));
-        const exp=S.expenses.find(e=>e.id===id);
-        if(exp){const ai=S.accounts.findIndex(a=>a.id===exp.acct);if(ai>-1)S.accounts[ai].balance+=Number(exp.amount);}
-        S.expenses=S.expenses.filter(e=>e.id!==id);save();render();
-      }
-    };
-  });
-  document.querySelectorAll('[data-dd]').forEach(b=>{
-    b.onclick=()=>{
-      if(confirm('এই হিসাবটি মুছে ফেলবেন?')){
-        S.debts=S.debts.filter(d=>d.id!==Number(b.getAttribute('data-dd')));save();render();
-      }
-    };
-  });
-
-  const expBtn=document.getElementById('exportBtn');
-  if(expBtn) expBtn.onclick=()=>{
-    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    const now=new Date();
-    a.href=url;a.download=`hisab_backup_${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}.json`;
-    a.click();URL.revokeObjectURL(url);
-  };
-
-  const impFile=document.getElementById('importFile');
-  const fileLbl=document.getElementById('fileLabel');
-  if(impFile){
-    impFile.onchange=()=>{
-      if(impFile.files[0]) fileLbl.textContent=impFile.files[0].name;
-    };
-  }
-
-  const impBtn=document.getElementById('importBtn');
-  if(impBtn) impBtn.onclick=()=>{
-    const f=impFile&&impFile.files[0];
-    if(!f){alert('আগে একটি JSON ফাইল বাছাই করুন');return;}
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      try{
-        const parsed=JSON.parse(ev.target.result);
-        if(!parsed.accounts||!parsed.expenses||!parsed.debts){alert('ফাইলটি সঠিক ব্যাকআপ ফাইল নয়');return;}
-        if(confirm('বর্তমান সব ডেটা মুছে এই ব্যাকআপ লোড হবে। নিশ্চিত?')){
-          S=parsed;save();sw('dashboard');
-        }
-      }catch(e){alert('ফাইলটি পড়া যায়নি। সঠিক JSON ফাইল দিন।');}
-    };
-    reader.readAsText(f);
-  };
-
-  const copyBtn=document.getElementById('copyBtn');
-  if(copyBtn) copyBtn.onclick=()=>{
-    const txt=JSON.stringify(S);
-    if(navigator.clipboard){
-      navigator.clipboard.writeText(txt).then(()=>alert('ডেটা ক্লিপবোর্ডে কপি হয়েছে! নোটপ্যাড বা ইমেইলে পেস্ট করে সেভ করুন।'));
-    } else {
-      const ta=document.createElement('textarea');
-      ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-      alert('কপি হয়েছে!');
-    }
-  };
-
-  const pasteBtn=document.getElementById('pasteBtn');
-  if(pasteBtn) pasteBtn.onclick=()=>{
-    if(navigator.clipboard&&navigator.clipboard.readText){
-      navigator.clipboard.readText().then(txt=>{
-        try{
-          const parsed=JSON.parse(txt);
-          if(!parsed.accounts||!parsed.expenses||!parsed.debts){alert('ক্লিপবোর্ডে সঠিক ব্যাকআপ ডেটা নেই');return;}
-          if(confirm('ক্লিপবোর্ডের ডেটা দিয়ে রিস্টোর করবেন?')){S=parsed;save();sw('dashboard');}
-        }catch(e){alert('ক্লিপবোর্ডে সঠিক ডেটা নেই');}
-      }).catch(()=>alert('ক্লিপবোর্ড অ্যাক্সেস করা যায়নি। ব্রাউজার পারমিশন দিন।'));
-    } else {alert('এই ব্রাউজারে কেলিপবোর্ড পেস্ট সরাসরি কাজ করে না।');}
-  };
-
-  const clrBtn=document.getElementById('clearBtn');
-  if(clrBtn) clrBtn.onclick=()=>{
-    if(confirm('সত্যিই সব ডেটা মুছে ফেলবেন? এটি ফেরানো যাবে না!'))
-    if(confirm('শেষবার নিশ্চিত করুন — সব রেকর্ড মুছে যাবে!')){
-      try{localStorage.removeItem('hisab_state');}catch(e){}
-      S=loadState();sw('dashboard');
-    }
-  };
+  const tr2=document.getElementById('tRecv');const tg2=document.getElementById('tGive');
+  if(tr2) tr2.onclick=()=>{S.debtType='receive';render();};if(tg2) tg2.onclick=()=>{S.debtType='give';render();};
+  document.querySelectorAll('[data-de]').forEach(b=>{b.onclick=()=>{if(confirm('মুছে ফেলবেন?')){const id=Number(b.getAttribute('data-de'));const exp=S.expenses.find(e=>e.id===id);if(exp){const ai=S.accounts.findIndex(a=>a.id===exp.acct);if(ai>-1)S.accounts[ai].balance+=Number(exp.amount);}S.expenses=S.expenses.filter(e=>e.id!==id);save();render();}};});
+  document.querySelectorAll('[data-dd]').forEach(b=>{b.onclick=()=>{if(confirm('মুছে ফেলবেন?')){S.debts=S.debts.filter(d=>d.id!==Number(b.getAttribute('data-dd')));save();render();}};});
+  const expBtn=document.getElementById('exportBtn');if(expBtn)expBtn.onclick=()=>{const blob=new Blob([JSON.stringify(S)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='hisab_backup.json';a.click();};
+  const impFile=document.getElementById('importFile');if(impFile){impFile.onchange=()=>{if(impFile.files[0])document.getElementById('fileLabel').textContent=impFile.files[0].name;};}
+  const impBtn=document.getElementById('importBtn');if(impBtn)impBtn.onclick=()=>{const f=impFile.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const p=JSON.parse(ev.target.result);if(p.accounts&&p.expenses){S=p;save();sw('dashboard');}}catch(e){}};r.readAsText(f);};
+  const copyBtn=document.getElementById('copyBtn');if(copyBtn)copyBtn.onclick=()=>{navigator.clipboard.writeText(JSON.stringify(S)).then(()=>alert('কপি হয়েছে'));};
+  const pasteBtn=document.getElementById('pasteBtn');if(pasteBtn)pasteBtn.onclick=()=>{navigator.clipboard.readText().then(txt=>{try{const p=JSON.parse(txt);if(p.accounts){S=p;save();sw('dashboard');}}catch(e){}});};
+  const clrBtn=document.getElementById('clearBtn');if(clrBtn)clrBtn.onclick=()=>{if(confirm('সব মুছবেন?')){localStorage.removeItem('hisab_state');S=loadState();sw('dashboard');}};
 }
-
-render();
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>হিসাব ট্র্যাকার</title>
-  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-
-  <style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  :root{
-    --g50:#f0faf4;--g100:#d1f0de;--g200:#a3e0be;--g400:#3db87a;--g500:#2a9e63;--g600:#1e7a4a;--g700:#155c38;--g800:#0d3f26;--g900:#072918;
-    --header-bg:#155c38;--header-text:#d1f0de;--header-sub:#6fcf97;
-    --accent:#2a9e63;--accent-dark:#1e7a4a;
-    --red-bg:#fde8e8;--red-text:#9b1c1c;--red-dark:#c0392b;
-    --amber-bg:#fef3dc;--amber-text:#7a4e00;--amber-dark:#e67e00;
-    --blue-bg:#dbeeff;--blue-text:#0c447c;
-    --purple-bg:#eeedfe;--purple-text:#26215c;
-  }
-  
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f2f8f4;
-  }
-
-  /* মোবাইলের জন্য ১০০% ফুল-স্ক্রিন রেসপনসিভ এবং ডেস্কটপের জন্য ফ্রেম লেআউট */
-  .pf{
-    width:100%;
-    max-width:100%;
-    min-height:100vh;
-    margin:0 auto;
-    background:#f2f8f4;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    font-family:var(--font-sans);
-    position:relative;
-  }
-  
-  @media (min-width: 480px) {
-    body {
-      background: #eef5f0;
-      padding: 20px 0;
-    }
-    .pf {
-      max-width:450px;
-      min-height:740px;
-      border-radius:36px;
-      border:2px solid #a3e0be;
-      box-shadow:0 10px 30px rgba(21,92,56,0.1);
-    }
-  }
-  
-  .sb{background:var(--header-bg);color:var(--header-text);padding:10px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
-  .ah{background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
-  .ah h1{font-size:17px;font-weight:500;color:var(--header-text);}
-  .ah p{font-size:12px;color:var(--header-sub);margin-top:2px;}
-  .body{flex:1;overflow-y:auto;padding:13px;padding-bottom:24px;}
-  .bnav{background:#fff;border-top:0.5px solid #a3e0be;display:flex;flex-shrink:0;padding:7px 0 11px;}
-  .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:4px 0;color:#6b9c7e;font-family:var(--font-sans);}
-  .nb.active{color:var(--accent);}
-  .nb i{font-size:21px;}
-  .nb span{font-size:10px;font-weight:500;}
-  .card{background:#fff;border-radius:14px;border:0.5px solid #a3e0be;padding:13px 14px;margin-bottom:10px;}
-  .ct{font-size:13px;color:#3d7a58;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-  .fg{margin-bottom:9px;}
-  .fl{font-size:12px;font-weight:500;color:#3d7a58;margin-bottom:4px;display:block;}
-  .fi{width:100%;padding:9px 11px;font-size:13px;border:0.5px solid #a3e0be;border-radius:8px;background:#f0faf4;font-family:var(--font-sans);outline:none;color:#1a3a2a;}
-  .fi:focus{border-color:var(--accent);}
-  .fr{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .sbtn{width:100%;padding:10px;font-size:13px;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:var(--font-sans);display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;}
-  .sbtn:active{opacity:.85;transform:scale(.98);}
-  .sbtn.red{background:#c0392b;}
-  .sbtn.amber{background:#c47700;}
-  .sbtn.outline{background:transparent;border:1px solid var(--accent);color:var(--accent);}
-  .li{background:#fff;border-radius:12px;border:0.5px solid #a3e0be;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
-  .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-  .ic.expense{background:var(--red-bg);color:var(--red-dark);}
-  .ic.receive{background:#d1f0de;color:var(--g700);}
-  .ic.give{background:var(--amber-bg);color:var(--amber-dark);}
-  .ic.wallet{background:#d1f0de;color:var(--g700);}
-  .ic.mfs{background:var(--blue-bg);color:var(--blue-text);}
-  .ic.bank{background:var(--purple-bg);color:var(--purple-text);}
-  .ii{flex:1;min-width:0;}
-  .it{font-size:13px;font-weight:500;color:#1a3a2a;}
-  .is{font-size:11px;color:#6b9c7e;margin-top:2px;}
-  .ia{font-size:14px;font-weight:500;text-align:right;}
-  .ia.expense{color:var(--red-dark);}
-  .ia.receive{color:var(--g600);}
-  .ia.give{color:var(--amber-dark);}
-  .db{background:none;border:none;cursor:pointer;padding:4px;color:#6b9c7e;font-size:15px;border-radius:6px;flex-shrink:0;}
-  .db:hover{background:var(--red-bg);color:var(--red-dark);}
-  .sh{font-size:12px;font-weight:500;color:#3d7a58;padding:4px 0 8px;display:flex;align-items:center;gap:6px;}
-  .dv{height:0.5px;background:#a3e0be;margin:10px 0;}
-  .netbar{display:flex;justify-content:space-between;align-items:center;background:var(--header-bg);border-radius:12px;padding:13px 15px;margin-bottom:10px;color:#fff;}
-  .nb-label{font-size:11px;color:var(--header-sub);}
-  .nb-val{font-size:20px;font-weight:500;}
-  .nb-sub{font-size:11px;color:var(--header-sub);margin-top:2px;}
-  .stat2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;}
-  .sc{border-radius:11px;padding:11px 10px;text-align:center;}
-  .sc.g{background:#d1f0de;} .sc.g .sl{color:var(--g600);} .sc.g .sv{color:var(--g800);}
-  .sc.r{background:var(--red-bg);} .sc.r .sl{color:#b22222;} .sc.r .sv{color:var(--red-text);}
-  .sc.a{background:var(--amber-bg);} .sc.a .sl{color:#8a5c00;} .sc.a .sv{color:var(--amber-text);}
-  .sc.b{background:var(--blue-bg);} .sc.b .sl{color:#1a5fa3;} .sc.b .sv{color:var(--blue-text);}
-  .sc.p{background:var(--purple-bg);} .sc.p .sl{color:#4a1db7;} .sc.p .sv{color:var(--purple-text);}
-  .sl{font-size:10px;font-weight:500;margin-bottom:4px;}
-  .sv{font-size:15px;font-weight:500;}
-  .tt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
-  .ac{background:#fff;border-radius:13px;border:0.5px solid #a3e0be;padding:12px 13px;margin-bottom:9px;display:flex;align-items:center;gap:11px;}
-  .alo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-  .an{font-size:13px;font-weight:500;color:#1a3a2a;}
-  .at{font-size:11px;color:#6b9c7e;margin-top:1px;}
-  .ab{font-size:15px;font-weight:500;color:var(--g800);}
-  .eb{background:none;border:none;cursor:pointer;color:#6b9c7e;font-size:15px;padding:4px;border-radius:6px;flex-shrink:0;}
-  .eb:hover{color:var(--accent);background:#d1f0de;}
-  .ttog{display:grid;grid-template-columns:1fr 1fr;border:0.5px solid #a3e0be;border-radius:8px;overflow:hidden;}
-  .tbtn{padding:9px 4px;font-size:12px;font-weight:500;border:none;cursor:pointer;font-family:var(--font-sans);background:#f0faf4;color:#6b9c7e;}
-  .tbtn.tr{background:#d1f0de;color:var(--g700);}
-  .tbtn.tg{background:var(--amber-bg);color:var(--amber-text);}
-  .es{text-align:center;padding:18px 0;color:#6b9c7e;font-size:13px;}
-  .mo{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;}
-  .mb{background:#fff;border-radius:16px;padding:18px;width:320px;max-width:92%;}
-  .mt{font-size:15px;font-weight:500;color:#1a3a2a;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
-  .mc{background:none;border:none;cursor:pointer;font-size:18px;color:#6b9c7e;}
-  .wallet-row{display:flex;align-items:center;gap:10px;background:#d1f0de;border-radius:12px;padding:11px 14px;margin-bottom:10px;}
-  .wr-icon{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--g700);flex-shrink:0;}
-  .wr-info{flex:1;}
-  .wr-name{font-size:13px;font-weight:500;color:var(--g800);}
-  .wr-type{font-size:11px;color:var(--g600);}
-  .wr-bal{font-size:17px;font-weight:500;color:var(--g800);}
-  .back-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
-  </style>
-</head>
-<body>
-
-<div class="pf" id="app">
-  <div class="sb">
-    <span>৯:৪১ AM</span>
-    <span style="display:flex;gap:6px;align-items:center;"><i class="ti ti-wifi" style="font-size:13px"></i><i class="ti ti-battery-4" style="font-size:13px"></i></span>
-  </div>
-  <div class="ah">
-    <h1 id="hTitle">ড্যাশবোর্ড</h1>
-    <p id="hSub">আপনার আর্থিক সারসংক্ষেপ</p>
-  </div>
-  <div class="body" id="screenBody"></div>
-  <div class="bnav">
-    <button class="nb active" onclick="sw('dashboard')" id="nav-dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i><span>ড্যাশবোর্ড</span></button>
-    <button class="nb" onclick="sw('accounts')" id="nav-accounts"><i class="ti ti-wallet" aria-hidden="true"></i><span>ব্যালেন্স</span></button>
-    <button class="nb" onclick="sw('expense')" id="nav-expense"><i class="ti ti-shopping-cart" aria-hidden="true"></i><span>খরচ</span></button>
-    <button class="nb" onclick="sw('debt')" id="nav-debt"><i class="ti ti-users" aria-hidden="true"></i><span>দেনা-পাওনা</span></button>
-    <button class="nb" onclick="sw('backup')" id="nav-backup"><i class="ti ti-database" aria-hidden="true"></i><span>ব্যাকআপ</span></button>
-  </div>
-</div>
-
-<script>
-const ACCTS=[
-  {id:'wallet',name:'মানিব্যাগ',type:'নগদ',bg:'#d1f0de',tc:'#0d3f26',icon:'ti-wallet',balance:1500},
-  {id:'bkash', name:'bKash',   type:'MFS', bg:'#fde8e8',tc:'#9b1c1c',icon:'ti-device-mobile',balance:3200},
-  {id:'nagad', name:'Nagad',   type:'MFS', bg:'#fef3dc',tc:'#7a4e00',icon:'ti-device-mobile',balance:800},
-  {id:'rocket',name:'Rocket',  type:'MFS', bg:'#dbeeff',tc:'#0c447c',icon:'ti-device-mobile',balance:450},
-  {id:'islami',name:'Islami Bank',type:'ব্যাংক',bg:'#d1f0de',tc:'#155c38',icon:'ti-building-bank',balance:12500},
-  {id:'prime', name:'Prime Bank',type:'ব্যাংক',bg:'#eeedfe',tc:'#26215c',icon:'ti-building-bank',balance:7800},
-];
-const CATS={খাবার:'ti-bowl',যাতায়াত:'ti-bus',শিক্ষা:'ti-book','বিদ্যুৎ/গ্যাস':'ti-bolt',চিকিৎসা:'ti-stethoscope',বিনোদন:'ti-device-tv',পোশাক:'ti-shirt',অন্যান্য:'ti-dots'};
-
-function loadState(){
-  try{
-    const s=localStorage.getItem('hisab_state');
-    if(s) return JSON.parse(s);
-  }catch(e){}
-  return {
-    accounts:JSON.parse(JSON.stringify(ACCTS)),
-    expenses:[
-      {id:1,amount:850,category:'খাবার',date:'২০২৫-০১-১৫',desc:'বাজার সদাই',acct:'wallet'},
-      {id:2,amount:200,category:'যাতায়াত',date:'২০২৫-০১-১৬',desc:'রিকশা ভাড়া',acct:'bkash'},
-      {id:3,amount:1500,category:'শিক্ষা',date:'২০২৫-০১-১৭',desc:'কোচিং ফি',acct:'islami'},
-    ],
-    debts:[
-      {id:1,name:'করিম ভাই',amount:2000,type:'receive',desc:'গত মাসে ধার দিয়েছিলাম'},
-      {id:2,name:'রহিম',amount:500,type:'give',desc:'দোকান থেকে বাকি'},
-      {id:3,name:'তানভীর',amount:1200,type:'receive',desc:'বাস ভাড়া দিয়েছিলাম'},
-    ],
-    nextId:10,activeTab:'dashboard',debtType:'receive',editingAcct:null,showModal:false
-  };
-}
-
-let S=loadState();
-
-function save(){
-  try{localStorage.setItem('hisab_state',JSON.stringify(S));}catch(e){}
-}
-
-function tk(n){return '৳'+Math.round(Number(n)).toLocaleString('en-IN');}
-function totBal(){return S.accounts.reduce((s,a)=>s+Number(a.balance),0);}
-function totExp(){return S.expenses.reduce((s,e)=>s+Number(e.amount),0);}
-function totRecv(){return S.debts.filter(d=>d.type==='receive').reduce((s,d)=>s+Number(d.amount),0);}
-function totPay(){return S.debts.filter(d=>d.type==='give').reduce((s,d)=>s+Number(d.amount),0);}
-function acctName(id){const a=S.accounts.find(a=>a.id===id);return a?a.name:'?';}
-function wallet(){return S.accounts.find(a=>a.id==='wallet');}
-
-function sw(tab){
-  S.activeTab=tab;S.showModal=false;save();
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('nav-'+tab).classList.add('active');
-  const h={dashboard:['ড্যাশবোর্ড','আপনার আর্থিক সারসংক্ষেপ'],accounts:['ব্যালেন্স','সকল অ্যাকাউন্টের হিসাব'],expense:['খরচের হিসাব','খরচ যোগ করুন ও দেখুন'],debt:['দেনা-পাওনা','ধার দেওয়া ও নেওয়ার হিসাব'],backup:['ব্যাকআপ ও রিস্টোর','ডেটা সংরক্ষণ করুন']};
-  document.getElementById('hTitle').textContent=h[tab][0];
-  document.getElementById('hSub').textContent=h[tab][1];
-  render();
-}
-
-function render(){
-  const b=document.getElementById('screenBody');
-  if(S.activeTab==='dashboard') b.innerHTML=rDash();
-  else if(S.activeTab==='accounts') b.innerHTML=rAccts();
-  else if(S.activeTab==='expense') b.innerHTML=rExp();
-  else if(S.activeTab==='debt') b.innerHTML=rDebt();
-  else b.innerHTML=rBackup();
-  if(S.showModal) showModal();
-  attachEv();
-}
-
-function rDash(){
-  const net=totRecv()-totPay();
-  const w=wallet();
-  const rec=[...S.expenses].slice(-4).reverse();
-  const rdb=[...S.debts].slice(-3).reverse();
-  return `
-  <div class="netbar">
-    <div>
-      <div class="nb-label">সকল অ্যাকাউন্ট মিলিয়ে</div>
-      <div class="nb-val" style="color:#a3e0be">${tk(totBal())}</div>
-      <div class="nb-sub">মোট ব্যালেন্স</div>
-    </div>
-    <i class="ti ti-report-money" style="font-size:30px;color:#6fcf97" aria-hidden="true"></i>
-  </div>
-
-  <div class="wallet-row">
-    <div class="wr-icon"><i class="ti ti-wallet" aria-hidden="true"></i></div>
-    <div class="wr-info">
-      <div class="wr-name">মানিব্যাগ (নগদ)</div>
-      <div class="wr-type">হাতে নগদ টাকা</div>
-    </div>
-    <div class="wr-bal">${tk(w?w.balance:0)}</div>
-  </div>
-
-  <div class="stat2">
-    <div class="sc b"><div class="sl">মোট খরচ</div><div class="sv">${tk(totExp())}</div></div>
-    <div class="sc p"><div class="sl">নিট পাওনা</div><div class="sv" style="color:${net>=0?'#26215c':'#9b1c1c'}">${tk(Math.abs(net))}</div></div>
-    <div class="sc g"><div class="sl">মোট পাব</div><div class="sv">${tk(totRecv())}</div></div>
-    <div class="sc a"><div class="sl">মোট দেব</div><div class="sv">${tk(totPay())}</div></div>
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-wallet" aria-hidden="true"></i> সকল অ্যাকাউন্ট</div>
-    ${S.accounts.map(a=>`
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
-        <div style="width:30px;height:30px;border-radius:8px;background:${a.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="ti ${a.icon}" style="font-size:14px;color:${a.tc}" aria-hidden="true"></i>
-        </div>
-        <div style="flex:1;font-size:13px;color:#1a3a2a;">${a.name} <span style="font-size:11px;color:#6b9c7e;">(${a.type})</span></div>
-        <div style="font-size:13px;font-weight:500;color:#155c38;">${tk(a.balance)}</div>
-      </div>`).join('')}
-    <div style="border-top:0.5px solid #a3e0be;margin-top:4px;padding-top:9px;display:flex;justify-content:space-between;">
-      <span style="font-size:12px;color:#3d7a58;">মোট ব্যালেন্স</span>
-      <span style="font-size:14px;font-weight:500;color:#0d3f26;">${tk(totBal())}</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-shopping-cart" aria-hidden="true"></i> সাম্প্রতিক খরচ</div>
-    ${rec.length?rec.map(e=>`
-      <div class="li" style="padding:9px 11px;">
-        <div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div>
-        <div class="ii"><div class="it">${e.category}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div>
-        <div class="ia expense">${tk(e.amount)}</div>
-      </div>`).join(''):'<div class="es">কোনো খরচ নেই</div>'}
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-users" aria-hidden="true"></i> সাম্প্রতিক দেনা-পাওনা</div>
-    ${rdb.length?rdb.map(d=>`
-      <div class="li" style="padding:9px 11px;">
-        <div class="ic ${d.type}"><i class="ti ${d.type==='receive'?'ti-arrow-down-left':'ti-arrow-up-right'}" aria-hidden="true"></i></div>
-        <div class="ii"><div class="it">${d.name}</div><div class="is">${d.type==='receive'?'আমি পাব':'আমি দেব'}</div></div>
-        <div class="ia ${d.type}">${tk(d.amount)}</div>
-      </div>`).join(''):'<div class="es">কোনো রেকর্ড নেই</div>'}
-  </div>`;
-}
-
-function rAccts(){
-  const grp=(list)=>list.map(a=>`
-    <div class="ac">
-      <div class="alo" style="background:${a.bg};"><i class="ti ${a.icon}" style="font-size:18px;color:${a.tc}" aria-hidden="true"></i></div>
-      <div style="flex:1;min-width:0;"><div class="an">${a.name}</div><div class="at">${a.type}</div></div>
-      <div style="text-align:right;">
-        <div class="ab">${tk(a.balance)}</div>
-        <button class="eb" data-edit="${a.id}" aria-label="ব্যালেন্স আপডেট" style="margin-top:2px;"><i class="ti ti-edit" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('');
-  return `
-  <div class="card" style="margin-bottom:10px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:13px;color:#3d7a58;">সর্বমোট ব্যালেন্স</span>
-      <span style="font-size:20px;font-weight:500;color:#0d3f26;">${tk(totBal())}</span>
-    </div>
-    <div style="font-size:11px;color:#6b9c7e;margin-top:3px;">৬টি অ্যাকাউন্ট মিলিয়ে</div>
-  </div>
-  <div class="sh"><i class="ti ti-wallet" style="font-size:15px" aria-hidden="true"></i> নগদ</div>
-  ${grp(S.accounts.filter(a=>a.type==='নগদ'))}
-  <div class="sh" style="margin-top:4px;"><i class="ti ti-device-mobile" style="font-size:15px" aria-hidden="true"></i> মোবাইল ব্যাংকিং (MFS)</div>
-  ${grp(S.accounts.filter(a=>a.type==='MFS'))}
-  <div class="sh" style="margin-top:4px;"><i class="ti ti-building-bank" style="font-size:15px" aria-hidden="true"></i> ব্যাংক</div>
-  ${grp(S.accounts.filter(a=>a.type==='ব্যাংক'))}
-  <div style="height:6px;"></div>`;
-}
-
-function rExp(){
-  const cats=Object.keys(CATS);
-  return `
-  <div class="card">
-    <div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন খরচ</div>
-    <div class="fr">
-      <div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="eAmt" placeholder="০" min="0"></div>
-      <div class="fg"><label class="fl">তারিখ</label><input class="fi" type="date" id="eDate"></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label class="fl">খাত</label><select class="fi" id="eCat">${cats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
-      <div class="fg"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
-    </div>
-    <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="eDesc" placeholder="বিবরণ লিখুন..."></div>
-    <button class="sbtn" id="addExpBtn"><i class="ti ti-plus" aria-hidden="true"></i> খরচ যোগ করুন</button>
-  </div>
-  <div class="sh"><i class="ti ti-list" style="font-size:15px" aria-hidden="true"></i> সকল খরচ (${S.expenses.length}টি) — ${tk(totExp())}</div>
-  ${S.expenses.length===0?'<div class="es"><i class="ti ti-mood-empty" style="font-size:28px;display:block;margin-bottom:6px" aria-hidden="true"></i>কোনো খরচ নেই</div>':
-    [...S.expenses].reverse().map(e=>`
-    <div class="li">
-      <div class="ic expense"><i class="ti ${CATS[e.category]||'ti-dots'}" aria-hidden="true"></i></div>
-      <div class="ii"><div class="it">${e.category}${e.desc?' — '+e.desc:''}</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia expense">${tk(e.amount)}</div>
-        <button class="db" data-de="${e.id}" aria-label="মুছুন"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('')}`;
-}
-
-function rDebt(){
-  const recv=S.debts.filter(d=>d.type==='receive');
-  const pay=S.debts.filter(d=>d.type==='give');
-  const t=S.debtType;
-  return `
-  <div class="card">
-    <div class="ct"><i class="ti ti-plus-circle" aria-hidden="true"></i> নতুন হিসাব</div>
-    <div class="fg"><label class="fl">ব্যক্তির নাম</label><input class="fi" type="text" id="dName" placeholder="নাম লিখুন..."></div>
-    <div class="fr">
-      <div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="dAmt" placeholder="০" min="0"></div>
-      <div class="fg"><label class="fl">ধরন</label>
-        <div class="ttog">
-          <button class="tbtn ${t==='receive'?'tr':''}" id="tRecv">আমি পাব</button>
-          <button class="tbtn ${t==='give'?'tg':''}" id="tGive">আমি দেব</button>
-        </div>
-      </div>
-    </div>
-    <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="dDesc" placeholder="বিবরণ লিখুন..."></div>
-    <button class="sbtn ${t==='give'?'amber':''}" id="addDebtBtn"><i class="ti ti-plus" aria-hidden="true"></i> হিসাব যোগ করুন</button>
-  </div>
-  <div class="sh" style="color:#1e7a4a;"><i class="ti ti-arrow-down-left" style="font-size:15px;color:#1e7a4a" aria-hidden="true"></i> আমি পাব (${recv.length}জন) — ${tk(totRecv())}</div>
-  ${recv.length===0?'<div class="es">কেউ পাওনা নেই</div>':recv.map(d=>`
-    <div class="li">
-      <div class="ic receive"><i class="ti ti-arrow-down-left" aria-hidden="true"></i></div>
-      <div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia receive">${tk(d.amount)}</div>
-        <button class="db" data-dd="${d.id}" aria-label="মুছুন"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('')}
-  <div class="dv"></div>
-  <div class="sh" style="color:#c47700;"><i class="ti ti-arrow-up-right" style="font-size:15px;color:#c47700" aria-hidden="true"></i> আমি দেব (${pay.length}জন) — ${tk(totPay())}</div>
-  ${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`
-    <div class="li">
-      <div class="ic give"><i class="ti ti-arrow-up-right" aria-hidden="true"></i></div>
-      <div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia give">${tk(d.amount)}</div>
-        <button class="db" data-dd="${d.id}" aria-label="মুছুন"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>`).join('')}`;
-}
-
-function rBackup(){
-  const dataSize=(JSON.stringify(S).length/1024).toFixed(1);
-  return `
-  <div class="card">
-    <div class="ct"><i class="ti ti-database-export" aria-hidden="true"></i> ডেটা রপ্তানি (Export)</div>
-    <p style="font-size:12px;color:#3d7a58;margin-bottom:12px;line-height:1.6;">আপনার সকল হিসাব একটি JSON ফাইলে ডাউনলোড করুন। পরে এই ফাইল দিয়ে পুনরায় রিস্টোর করতে পারবেন।</p>
-    <div style="background:#f0faf4;border-radius:10px;padding:11px 13px;margin-bottom:12px;display:flex;justify-content:space-between;">
-      <div>
-        <div style="font-size:12px;color:#6b9c7e;">রেকورد সংখ্যা</div>
-        <div style="font-size:14px;font-weight:500;color:#0d3f26;margin-top:2px;">${S.expenses.length}টি খরচ · ${S.debts.length}টি দেনা-পাওনা</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:12px;color:#6b9c7e;">ডেটা সাইজ</div>
-        <div style="font-size:14px;font-weight:500;color:#0d3f26;margin-top:2px;">${dataSize} KB</div>
-      </div>
-    </div>
-    <button class="sbtn" id="exportBtn"><i class="ti ti-download" aria-hidden="true"></i> JSON ফাইল ডাউনলোড করুন</button>
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-database-import" aria-hidden="true"></i> ডেটা আমদানি (Import)</div>
-    <p style="font-size:12px;color:#3d7a58;margin-bottom:12px;line-height:1.6;">আগে ডাউনলোড করা JSON ব্যাকআপ ফাইল আপলোড করুন। সতর্কতা: বর্তমান ডেটা মুছে যাবে।</p>
-    <div style="border:1.5px dashed #a3e0be;border-radius:10px;padding:16px;text-align:center;margin-bottom:12px;background:#f0faf4;">
-      <i class="ti ti-file-upload" style="font-size:28px;color:#3db87a;display:block;margin-bottom:6px" aria-hidden="true"></i>
-      <label for="importFile" style="font-size:13px;color:#1e7a4a;font-weight:500;cursor:pointer;">JSON ফাইল বেছে নিন</label>
-      <input type="file" id="importFile" accept=".json" style="display:none;">
-      <div id="fileLabel" style="font-size:11px;color:#6b9c7e;margin-top:4px;">কোনো ফাইল বাছাই হয়নি</div>
-    </div>
-    <button class="sbtn outline" id="importBtn"><i class="ti ti-database-import" aria-hidden="true"></i> রিস্টোর করুন</button>
-  </div>
-
-  <div class="card">
-    <div class="ct"><i class="ti ti-copy" aria-hidden="true"></i> কেলিপবোর্ড ব্যাকআপ</div>
-    <p style="font-size:12px;color:#3d7a58;margin-bottom:12px;line-height:1.6;">ডেটা কপি করে অন্য জায়গায় (নোটপ্যাড, ইমেইল) সেভ করুন।</p>
-    <div class="back-row">
-      <button class="sbtn" id="copyBtn" style="font-size:12px;"><i class="ti ti-copy" aria-hidden="true"></i> কপি করুন</button>
-      <button class="sbtn outline" id="pasteBtn" style="font-size:12px;"><i class="ti ti-clipboard" aria-hidden="true"></i> পেস্ট করুন</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="ct" style="color:#c0392b;"><i class="ti ti-trash" aria-hidden="true"></i> সব ডেটা মুছুন</div>
-    <p style="font-size:12px;color:#6b9c7e;margin-bottom:12px;line-height:1.6;">সতর্কতা: এটি করলে সকল খরচ ও দেনা-পাওনার রেকর্ড স্থায়ীভাবে মুছে যাবে।</p>
-    <button class="sbtn red" id="clearBtn"><i class="ti ti-alert-triangle" aria-hidden="true"></i> সব ডেটা মুছে ফেলুন</button>
-  </div>`;
-}
-
-function showModal(){
-  const frame=document.getElementById('app');
-  const a=S.accounts.find(a=>a.id===S.editingAcct);
-  if(!a) return;
-  const old=document.getElementById('editModal');
-  if(old) old.remove();
-  const ov=document.createElement('div');
-  ov.className='mo'; ov.id='editModal';
-  ov.innerHTML=`
-    <div class="mb">
-      <div class="mt">
-        <span>${a.name} — ব্যালেন্স</span>
-        <button class="mc" id="mClose" aria-label="বন্ধ"><i class="ti ti-x" aria-hidden="true"></i></button>
-      </div>
-      <div class="fg"><label class="fl">নতুন ব্যালেন্স (৳)</label>
-        <input class="fi" type="number" id="newBal" value="${a.balance}" min="0" style="font-size:16px;padding:11px;">
-      </div>
-      <button class="sbtn" id="saveBal" style="margin-top:10px;"><i class="ti ti-check" aria-hidden="true"></i> সংরক্ষণ করুন</button>
-    </div>`;
-  frame.appendChild(ov);
-  document.getElementById('mClose').onclick=()=>{S.showModal=false;S.editingAcct=null;ov.remove();};
-  document.getElementById('saveBal').onclick=()=>{
-    const v=document.getElementById('newBal').value;
-    if(!v||Number(v)<0){alert('সঠিক পরিমাণ লিখুন');return;}
-    const i=S.accounts.findIndex(ac=>ac.id===S.editingAcct);
-    if(i>-1) S.accounts[i].balance=Number(v);
-    S.showModal=false;S.editingAcct=null;
-    ov.remove();save();render();
-  };
-  document.getElementById('newBal').focus();
-}
-
-function attachEv(){
-  document.querySelectorAll('[data-edit]').forEach(b=>{
-    b.onclick=()=>{S.editingAcct=b.getAttribute('data-edit');S.showModal=true;showModal();};
-  });
-
-  const ae=document.getElementById('addExpBtn');
-  if(ae) ae.onclick=()=>{
-    const amt=document.getElementById('eAmt').value;
-    const date=document.getElementById('eDate').value;
-    const cat=document.getElementById('eCat').value;
-    const desc=document.getElementById('eDesc').value.trim();
-    const acct=document.getElementById('eAcct').value;
-    if(!amt||Number(amt)<=0){alert('সঠিক পরিমাণ লিখুন');return;}
-    const d=date||new Date().toISOString().split('T')[0];
-    S.expenses.push({id:S.nextId++,amount:Number(amt),category:cat,date:d,desc,acct});
-    const ai=S.accounts.findIndex(a=>a.id===acct);
-    if(ai>-1) S.accounts[ai].balance=Math.max(0,S.accounts[ai].balance-Number(amt));
-    save();render();
-  };
-
-  const ad=document.getElementById('addDebtBtn');
-  if(ad) ad.onclick=()=>{
-    const name=document.getElementById('dName').value.trim();
-    const amt=document.getElementById('dAmt').value;
-    const desc=document.getElementById('dDesc').value.trim();
-    if(!name){alert('ব্যক্তির নাম লিখুন');return;}
-    if(!amt||Number(amt)<=0){alert('সঠিক পরিমাণ লিখুন');return;}
-    S.debts.push({id:S.nextId++,name,amount:Number(amt),type:S.debtType,desc});
-    save();render();
-  };
-
-  const tr2=document.getElementById('tRecv');
-  const tg2=document.getElementById('tGive');
-  if(tr2) tr2.onclick=()=>{S.debtType='receive';render();};
-  if(tg2) tg2.onclick=()=>{S.debtType='give';render();};
-
-  document.querySelectorAll('[data-de]').forEach(b=>{
-    b.onclick=()=>{
-      if(confirm('এই খরচটি মুছে ফেলবেন?')){
-        const id=Number(b.getAttribute('data-de'));
-        const exp=S.expenses.find(e=>e.id===id);
-        if(exp){const ai=S.accounts.findIndex(a=>a.id===exp.acct);if(ai>-1)S.accounts[ai].balance+=Number(exp.amount);}
-        S.expenses=S.expenses.filter(e=>e.id!==id);save();render();
-      }
-    };
-  });
-  document.querySelectorAll('[data-dd]').forEach(b=>{
-    b.onclick=()=>{
-      if(confirm('এই হিসাবটি মুছে ফেলবেন?')){
-        S.debts=S.debts.filter(d=>d.id!==Number(b.getAttribute('data-dd')));save();render();
-      }
-    };
-  });
-
-  const expBtn=document.getElementById('exportBtn');
-  if(expBtn) expBtn.onclick=()=>{
-    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    const now=new Date();
-    a.href=url;a.download=`hisab_backup_${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}.json`;
-    a.click();URL.revokeObjectURL(url);
-  };
-
-  const impFile=document.getElementById('importFile');
-  const fileLbl=document.getElementById('fileLabel');
-  if(impFile){
-    impFile.onchange=()=>{
-      if(impFile.files[0]) fileLbl.textContent=impFile.files[0].name;
-    };
-  }
-
-  const impBtn=document.getElementById('importBtn');
-  if(impBtn) impBtn.onclick=()=>{
-    const f=impFile&&impFile.files[0];
-    if(!f){alert('আগে একটি JSON ফাইল বাছাই করুন');return;}
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      try{
-        const parsed=JSON.parse(ev.target.result);
-        if(!parsed.accounts||!parsed.expenses||!parsed.debts){alert('ফাইলটি সঠিক ব্যাকআপ ফাইল নয়');return;}
-        if(confirm('বর্তমান সব ডেটা মুছে এই ব্যাকআপ লোড হবে। নিশ্চিত?')){
-          S=parsed;save();sw('dashboard');
-        }
-      }catch(e){alert('ফাইলটি পড়া যায়নি। সঠিক JSON ফাইল দিন।');}
-    };
-    reader.readAsText(f);
-  };
-
-  const copyBtn=document.getElementById('copyBtn');
-  if(copyBtn) copyBtn.onclick=()=>{
-    const txt=JSON.stringify(S);
-    if(navigator.clipboard){
-      navigator.clipboard.writeText(txt).then(()=>alert('ডেটা ক্লিপবোর্ডে কপি হয়েছে! নোটপ্যাড বা ইমেইলে পেস্ট করে সেভ করুন।'));
-    } else {
-      const ta=document.createElement('textarea');
-      ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-      alert('কপি হয়েছে!');
-    }
-  };
-
-  const pasteBtn=document.getElementById('pasteBtn');
-  if(pasteBtn) pasteBtn.onclick=()=>{
-    if(navigator.clipboard&&navigator.clipboard.readText){
-      navigator.clipboard.readText().then(txt=>{
-        try{
-          const parsed=JSON.parse(txt);
-          if(!parsed.accounts||!parsed.expenses||!parsed.debts){alert('ক্লিপবোর্ডে সঠিক ব্যাকআপ ডেটা নেই');return;}
-          if(confirm('ক্লিপবোর্ডের ডেটা দিয়ে রিস্টোর করবেন?')){S=parsed;save();sw('dashboard');}
-        }catch(e){alert('ক্লিপবোর্ডে সঠিক ডেটা নেই');}
-      }).catch(()=>alert('ক্লিপবোর্ড অ্যাক্সেস করা যায়নি। ব্রাউজার পারমিশন দিন।'));
-    } else {alert('এই ব্রাউজারে কেলিপবোর্ড পেস্ট সরাসরি কাজ করে না।');}
-  };
-
-  const clrBtn=document.getElementById('clearBtn');
-  if(clrBtn) clrBtn.onclick=()=>{
-    if(confirm('সত্যিই সব ডেটা মুছে ফেলবেন? এটি ফেরানো যাবে না!'))
-    if(confirm('শেষবার নিশ্চিত করুন — সব রেকর্ড মুছে যাবে!')){
-      try{localStorage.removeItem('hisab_state');}catch(e){}
-      S=loadState();sw('dashboard');
-    }
-  };
-}
-
 render();
 </script>
 </body>
