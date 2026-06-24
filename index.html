@@ -22,11 +22,16 @@
     padding: 0;
     background: #f2f8f4;
     font-family: Arial, sans-serif;
+    height: 100vh;
+    height: 100dvh;
   }
+  
+  /* মেইন অ্যাপ কন্টেইনার ফিক্স - dvh ব্যবহার করা হয়েছে মোবাইল ব্রাউজার বারের জন্য */
   .pf{
     width:100%;
     max-width:100%;
     height:100vh;
+    height:100dvh;
     margin:0 auto;
     background:#f2f8f4;
     display:flex;
@@ -34,10 +39,12 @@
     position:relative;
     overflow:hidden;
   }
+  
   @media (min-width: 480px) {
     body {
       background: #eef5f0;
       padding: 20px 0;
+      height: auto;
     }
     .pf {
       max-width:450px;
@@ -47,6 +54,7 @@
       box-shadow:0 10px 30px rgba(21,92,56,0.1);
     }
   }
+  
   .sb{background:var(--header-bg);color:var(--header-text);padding:10px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-shrink:0;}
   .ah{background:var(--header-bg);color:#fff;padding:12px 20px 15px;flex-shrink:0;}
   .ah h1{font-size:17px;font-weight:500;color:var(--header-text);}
@@ -60,23 +68,23 @@
     -webkit-overflow-scrolling: touch;
   }
   
-  /* বটম ট্যাব বার একদম নিচে লক করা হলো (ফাঁকা অংশ দূর করার জন্য ফিক্স) */
+  /* বটম নেভিগেশন বার - একদম স্ক্রিনের নিচে লেগে থাকার জন্য ফিক্স */
   .bnav{
     background:#fff;
     border-top:0.5px solid #a3e0be;
     display:flex;
     flex-shrink:0;
-    padding:10px 0 14px;
-    position: sticky;
-    bottom: 0;
-    left: 0;
+    padding:10px 0 calc(10px + env(safe-area-inset-bottom, 0px)); /* আইফোন বা ফুল-স্ক্রিন মোবাইলের নিচের এক্সট্রা স্পেস হ্যান্ডেল করার জন্য */
     width: 100%;
     z-index: 10;
+    margin-top: auto;
   }
-  .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:4px 0;color:#6b9c7e;}
+  
+  .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;cursor:pointer;padding:4px 0;color:#6b9c7e;outline:none;}
   .nb.active{color:var(--accent);}
   .nb i{font-size:21px;}
   .nb span{font-size:10px;font-weight:500;}
+  
   .card{background:#fff;border-radius:14px;border:0.5px solid #a3e0be;padding:13px 14px;margin-bottom:10px;}
   .ct{font-size:13px;color:#3d7a58;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
   .fg{margin-bottom:9px;}
@@ -272,7 +280,7 @@ function initChart() {
 }
 
 function rDash(){
-  const w=wallet();const rec=[...S.expenses].slice(-3).reverse();
+  const w=wallet();
   return `
   <div class="netbar">
     <div><div class="nb-label">সকল অ্যাকাউন্ট মিলিয়ে</div><div class="nb-val" style="color:#a3e0be">${tk(totBal())}</div><div class="nb-sub">মোট ব্যালেন্স</div></div>
