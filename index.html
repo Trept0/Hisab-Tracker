@@ -91,6 +91,8 @@
   .li{background:var(--card-bg); border-radius:12px; border:0.5px solid var(--border-color); padding:11px 13px; margin-bottom:8px; display:flex; align-items:center; gap:10px;}
   .ic{width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;}
   .ic.expense{background:var(--red-bg); color:var(--red-dark);}
+  .ic.receive{background:var(--g100); color:var(--text-main);}
+  .ic.give{background:var(--amber-bg); color:var(--amber-dark);}
   .ii{flex:1; min-width:0;}
   .it{font-size:13px; font-weight:500; color:var(--text-main);}
   .is{font-size:11px; color:#6b9c7e; margin-top:2px;}
@@ -107,12 +109,10 @@
   .netbar{display:flex; justify-content:space-between; align-items:center; background:var(--header-bg); border-radius:12px; padding:13px 15px; margin-bottom:10px; color:#fff;}
   .nb-label{font-size:11px; color:var(--header-sub);}
   .nb-val{font-size:20px; font-weight:500;}
-  .nb-sub{font-size:11px; color:var(--header-sub); margin-top:2px;}
   
   .stat2{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:10px;}
   .sc{border-radius:11px; padding:11px 10px; text-align:center;}
   .sc.g{background:var(--g100);} .sc.g .sl{color:var(--text-main);} .sc.g .sv{color:var(--text-main);}
-  .sc.r"><div class="sl">মোট খরচ</div><div class="sv"></div></div>
   .sc.r{background:var(--red-bg);} .sc.r .sl{color:#b22222;} .sc.r .sv{color:var(--red-text);}
   .sl{font-size:10px; font-weight:500; margin-bottom:4px;}
   .sv{font-size:15px; font-weight:500;}
@@ -129,21 +129,17 @@
   .es{text-align:center; padding:18px 0; color:#6b9c7e; font-size:13px;}
   
   .chart-container {position: relative; margin: auto; height: 160px; width: 160px; margin-bottom: 10px;}
-  
-  /* থিম সুইচার এলিমেন্ট */
   .theme-selector { display: flex; gap: 14px; justify-content: center; padding: 8px 0; }
   .tdot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; transition: 0.2s; }
   .tdot.active { border-color: var(--text-main); transform: scale(1.15); }
   
-  /* বাজেট প্রোগ্রেস বার */
   .pbar-bg { width: 100%; height: 8px; background: var(--g100); border-radius: 4px; overflow: hidden; margin-top: 6px; }
   .pbar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
   .pbar-fill.danger { background: var(--red-dark); }
 
-  /* প্রিন্ট স্টাইলিং মিডিয়া কোয়েরি */
   @media print {
     body, html, .pf, .body { background: #fff !important; color: #000 !important; overflow: visible !important; height: auto !important; }
-    .bnav, .ah, .bnav, .card:has(#addExpBtn), .card:has(#bAmt), .card:has(#addDebtBtn), .theme-selector, button, input, select, .db, .card:has(input[type="file"]) { display: none !important; }
+    .bnav, .ah, .card:has(button[onclick*="Transfer"]), button, input, select, .db { display: none !important; }
     .card { border: 1px solid #ccc !important; page-break-inside: avoid; }
     .body { padding: 0 !important; }
   }
@@ -172,8 +168,9 @@
 <script>
 let myChart = null;
 let budgetChart = null;
+let reminderTimer = null;
 
-const ACCTS=[
+const DEFAULT_ACCTS=[
   {id:'wallet',name:'মানিব্যাগ',type:'নগদ',bg:'#d1f0de',tc:'#0d3f26',icon:'ti-wallet',balance:0},
   {id:'bkash', name:'bKash',   type:'MFS', bg:'#fde8e8',tc:'#9b1c1c',icon:'ti-device-mobile',balance:0},
   {id:'nagad', name:'Nagad',   type:'MFS', bg:'#fef3dc',tc:'#7a4e00',icon:'ti-device-mobile',balance:0},
@@ -191,20 +188,20 @@ const DEFAULT_SUBS = {
 };
 
 function loadState(){
-  try{const s=localStorage.getItem('hisab_state_v2');if(s) return JSON.parse(s);}catch(e){}
+  try{const s=localStorage.getItem('hisab_state_v3');if(s) return JSON.parse(s);}catch(e){}
   return {
-    accounts:JSON.parse(JSON.stringify(ACCTS)),
+    accounts:JSON.parse(JSON.stringify(DEFAULT_ACCTS)),
     expenses:[], debts:[], customCategories: [], subCategories: JSON.parse(JSON.stringify(DEFAULT_SUBS)),
-    budgets: {}, theme: 'green',
+    budgets: {}, theme: 'green', reminderTime: '', reminderEnabled: false,
     nextId:1, activeTab:'dashboard', debtType:'receive'
   };
 }
 
 let S = loadState();
+if(!S.accounts) S.accounts = JSON.parse(JSON.stringify(DEFAULT_ACCTS));
 if(!S.subCategories) S.subCategories = JSON.parse(JSON.stringify(DEFAULT_SUBS));
 if(!S.budgets) S.budgets = {};
 if(!S.theme) S.theme = 'green';
-if(!S.customCategories) S.customCategories = [];
 
 document.body.className = S.theme === 'green' ? '' : 'theme-' + S.theme;
 
@@ -216,7 +213,7 @@ function getTodayDate() {
   return yyyy + '-' + mm + '-' + dd;
 }
 
-function save(){try{localStorage.setItem('hisab_state_v2',JSON.stringify(S));}catch(e){}}
+function save(){try{localStorage.setItem('hisab_state_v3',JSON.stringify(S));}catch(e){}}
 function tk(n){return '৳'+Math.round(Number(n)).toLocaleString('en-IN');}
 function totBal(){return S.accounts.reduce((s,a)=>s+Number(a.balance),0);}
 function totExp(){return S.expenses.reduce((s,e)=>s+Number(e.amount),0);}
@@ -233,11 +230,11 @@ function sw(tab){
   document.getElementById('nav-'+tab).classList.add('active');
   const h={
     dashboard:['ড্যাশবোর্ড','আপনার আর্থিক সারসংক্ষেপ'],
-    accounts:['ব্যালেন্স','সকল অ্যাকাউন্টের হিসাব'],
+    accounts:['ব্যালেন্স ও ট্রান্সফার','অ্যাকাউন্ট ম্যানেজমেন্ট ও ফান্ড ট্রান্সফার'],
     expense:['খরচের হিসাব','খরচ যোগ করুন ও দেখুন'],
     budget:['বাজেট প্ল্যানার','খাতভিত্তিক মাসিক বাজেট'],
-    debt:['দেনা-পাওনা','ধার দেওয়া ও নেওয়ার হিসাব'],
-    settings:['সেটিংস ও কন্ট্রোল প্যানেল','অ্যাপ কাস্টমাইজেশন ও ব্যাকআপ রিপোর্ট']
+    debt:['দেনা-পাওনা','ব্যালেন্স ট্র্যাকিং ও কন্টাক্ট ধার'],
+    settings:['সেটিংস ও কন্ট্রোল প্যানেল','অ্যাপ কাস্টমাইজেশন ও রিমাইন্ডার']
   };
   document.getElementById('hTitle').textContent=h[tab][0];
   document.getElementById('hSub').textContent=h[tab][1];
@@ -279,10 +276,8 @@ function initBudgetChart() {
   const ctx = document.getElementById('bChart');
   if(!ctx) return;
   if(budgetChart) budgetChart.destroy();
-  
   let totB = 0; Object.values(S.budgets).forEach(v => totB += Number(v));
   if(totB === 0 && totExp() === 0) return;
-
   budgetChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -297,27 +292,38 @@ function rDash(){
   const w=S.accounts.find(a=>a.id==='wallet');
   return `
   <div class="netbar">
-    <div><div class="nb-label">সকল অ্যাকাউন্ট মিলিয়ে</div><div class="nb-val">${tk(totBal())}</div><div class="nb-sub">মোট ব্যালেন্স</div></div>
+    <div><div class="nb-label">সকল অ্যাকাউন্ট মিলিয়ে</div><div class="nb-val">${tk(totBal())}</div></div>
     <i class="ti ti-report-money" style="font-size:30px;" aria-hidden="true"></i>
   </div>
-  
   <div class="card" style="display:flex; flex-direction:column; align-items:center; padding: 10px;">
-    <div class="ct" style="width:100%;"><i class="ti ti-chart-pie"></i> খরচের পাই চার্ট</div>
     <div class="chart-container"><canvas id="pieChart"></canvas></div>
   </div>
-
   <div class="stat2">
     <div class="sc r"><div class="sl">মোট খরচ</div><div class="sv">${tk(totExp())}</div></div>
-    <div class="sc g"><div class="sl">হাতে নগদ (মানিব্যাগ)</div><div class="sv">${tk(w?w.balance:0)}</div></div>
+    <div class="sc g"><div class="sl">মানিব্যাগ (নগদ)</div><div class="sv">${tk(w?w.balance:0)}</div></div>
   </div>`;
 }
 
 function rAccts(){
-  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;">সর্বমোট ব্যালেন্স</span><span style="font-size:18px;font-weight:500;">${tk(totBal())}</span></div></div>
+  return `
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;">সর্বমোট ব্যালেন্স</span><span style="font-size:18px;font-weight:500;">${tk(totBal())}</span></div></div>
+  
+  <!-- ব্যালেন্স ট্রান্সফার ইন্টারফেস -->
+  <div class="card">
+    <div class="ct"><i class="ti ti-arrows-transfer-down"></i> সরাসরি ব্যালেন্স ট্রান্সফার</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">কোথা থেকে (From)</label><select class="fi" id="tFrom">${S.accounts.map(a=>`<option value="${a.id}">${a.name} (${tk(a.balance)})</option>`).join('')}</select></div>
+      <div class="fg"><label class="fl">কোথায় (To)</label><select class="fi" id="tTo">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
+    </div>
+    <div class="fg"><label class="fl">টাকার পরিমাণ (৳)</label><input class="fi" type="number" id="tAmt" placeholder="০"></div>
+    <button class="sbtn blue" onclick="executeTransfer()">ফান্ড ট্রান্সফার করুন</button>
+  </div>
+
+  <div class="sh">অ্যাকাউন্ট সমূহের তালিকা</div>
   ${S.accounts.map(a=>`
     <div class="ac" style="padding:10px; margin-bottom:6px;">
-      <div class="alo" style="background:${S.theme==='dark'?'#444':a.bg}; width:34px; height:34px;"><i class="ti ${a.icon}" style="font-size:16px; color:${S.theme==='dark'?'#fff':a.tc}"></i></div>
-      <div style="flex:1;"><div class="an">${a.name}</div></div>
+      <div class="alo" style="background:${S.theme==='dark'?'#444':a.bg || '#eeedfe'}; width:34px; height:34px;"><i class="ti ${a.icon || 'ti-credit-card'}" style="font-size:16px; color:${S.theme==='dark'?'#fff':a.tc || '#26215c'}"></i></div>
+      <div style="flex:1;"><div class="an">${a.name} <span style="font-size:10px; color:#777;">(${a.type})</span></div></div>
       <div style="text-align:right; display:flex; align-items:center; gap:8px;">
         <div class="ab" style="font-size:14px;">${tk(a.balance)}</div>
         <button class="db" onclick="editAcctBal('${a.id}')"><i class="ti ti-edit"></i></button>
@@ -327,109 +333,81 @@ function rAccts(){
 
 function rExp(){
   const allCats = getAllCategories();
-  const firstCat = allCats[0];
-  const subs = getSubsForCat(firstCat);
-  
   return `<div class="card">
     <div class="ct"><i class="ti ti-plus-circle"></i> নতুন খরচ যোগ করুন</div>
     <div class="fr">
       <div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="eAmt" placeholder="০"></div>
       <div class="fg"><label class="fl">তারিখ</label><input class="fi" type="date" id="eDate" value="${getTodayDate()}"></div>
     </div>
-    
     <div class="fr">
-      <div class="fg">
-        <label class="fl">মূল খাত</label>
-        <select class="fi" id="eCat" onchange="updateSubDropdown()">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-      </div>
-      <div class="fg">
-        <label class="fl">উপখাত</label>
-        <select class="fi" id="eSubCat">${subs.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
-      </div>
+      <div class="fg"><label class="fl">মূল খাত</label><select class="fi" id="eCat" onchange="updateSubDropdown()">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
+      <div class="fg"><label class="fl">উপখাত</label><select class="fi" id="eSubCat">${getSubForFirstCat().map(s=>`<option value="${s}">${s}</option>`).join('')}</select></div>
     </div>
-    
-    <div class="fr">
-      <div class="fg" style="grid-column: span 2;"><label class="fl">অ্যাকাউন্ট</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
-    </div>
-    
-    <div class="fg"><label class="fl">বিবরণ (ঐচ্ছিক)</label><input class="fi" type="text" id="eDesc" placeholder="বাজারের অতিরিক্ত বিবরণ..."></div>
+    <div class="fg"><label class="fl">অ্যাকাউন্ট থেকে কাটবে</label><select class="fi" id="eAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="eDesc" placeholder="অতিরিক্ত তথ্য..."></div>
     <button class="sbtn" id="addExpBtn">খরচ সেভ করুন</button>
   </div>
-  
-  <div class="sh">আজকের খরচের তালিকা</div>
+  <div class="sh">খরচের তালিকা</div>
   ${S.expenses.length===0?'<div class="es">কোনো খরচ নেই</div>':[...S.expenses].reverse().map(e=>`
     <div class="li">
       <div class="ic expense"><i class="ti ti-shopping-cart"></i></div>
-      <div class="ii">
-        <div class="it">${e.category} (${e.subCategory || 'সাধারণ'})</div>
-        <div class="is">${e.date} · ${acctName(e.acct)} ${e.desc?'· '+e.desc:''}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="ia expense">${tk(e.amount)}</div>
-        <button class="db" onclick="delExp(${e.id})"><i class="ti ti-trash"></i></button>
-      </div>
+      <div class="ii"><div class="it">${e.category} (${e.subCategory||'সাধারণ'})</div><div class="is">${e.date} · ${acctName(e.acct)}</div></div>
+      <div style="display:flex;align-items:center;gap:6px;"><div class="ia expense">${tk(e.amount)}</div><button class="db" onclick="delExp(${e.id})"><i class="ti ti-trash"></i></button></div>
     </div>`).join('')}`;
 }
 
+function getSubForFirstCat() { const c = getAllCategories(); return c.length ? getSubsForCat(c[0]) : ['সাধারণ']; }
+
 function rBudget() {
   const allCats = getAllCategories();
-  let totalBudget = 0; Object.values(S.budgets).forEach(v => totalBudget += Number(v));
-
-  return `
-  <div class="card">
+  return `<div class="card">
     <div class="ct"><i class="ti ti-plus-circle"></i> বাজেট সেট করুন</div>
     <div class="fr">
-      <div class="fg"><label class="fl">খাত নির্বাচন করুন</label><select class="fi" id="bCat">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
-      <div class="fg"><label class="fl">বাজেট পরিমাণ (৳)</label><input class="fi" type="number" id="bAmt" placeholder="২০০০"></div>
+      <div class="fg"><label class="fl">খাত</label><select class="fi" id="bCat">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
+      <div class="fg"><label class="fl">বাজেট (৳)</label><input class="fi" type="number" id="bAmt" placeholder="২০০০"></div>
     </div>
     <button class="sbtn" onclick="saveBudget()">বাজেট সেভ করুন</button>
   </div>
-
-  <div class="sh">খাতভিত্তিক বাজেট ও লাইভ ট্র্যাকিং (মোট: ${tk(totalBudget)})</div>
+  <div class="sh">বাজেট ট্র্যাকিং</div>
   ${allCats.map(c => {
-    const budget = S.budgets[c] || 0;
-    if(budget === 0) return '';
+    const budget = S.budgets[c] || 0; if(budget === 0) return '';
     const spent = S.expenses.filter(e => e.category === c).reduce((sum, e) => sum + Number(e.amount), 0);
-    let pct = budget > 0 ? (spent / budget) * 100 : 0;
-    if(pct > 100) pct = 100;
-    return `
-    <div class="card" style="margin-bottom:8px; padding:10px 12px;">
-      <div style="display:flex; justify-content:space-between; font-size:12px;">
-        <span style="font-weight:bold;">${c}</span>
-        <span>ব্যয়: ${tk(spent)} / বাজেট: ${tk(budget)}</span>
-      </div>
+    let pct = budget > 0 ? (spent / budget) * 100 : 0; if(pct > 100) pct = 100;
+    return `<div class="card" style="margin-bottom:8px; padding:10px 12px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px;"><span style="font-weight:bold;">${c}</span><span>${tk(spent)} / ${tk(budget)}</span></div>
       <div class="pbar-bg"><div class="pbar-fill ${spent > budget ? 'danger' : ''}" style="width: ${pct}%;"></div></div>
     </div>`;
-  }).join('') || '<div class="es">কোনো বাজেট সেট করা নেই</div>'}
-
-  <div class="card" style="display:flex; flex-direction:column; align-items:center; padding: 10px; margin-top:15px;">
-    <div class="ct" style="width:100%;"><i class="ti ti-chart-donut"></i> বাজেট বনাম খরচ অনুপাত</div>
-    <div class="chart-container"><canvas id="bChart"></canvas></div>
-  </div>`;
+  }).join('') || '<div class="es">কোনো বাজেট নেই</div>'}
+  <div class="card" style="display:flex; flex-direction:column; align-items:center; padding:10px;"><div class="chart-container"><canvas id="bChart"></canvas></div></div>`;
 }
 
 function rDebt(){
   const recv=S.debts.filter(d=>d.type==='receive'); const pay=S.debts.filter(d=>d.type==='give');
   return `<div class="card">
     <div class="ct"><i class="ti ti-plus-circle"></i> নতুন দেনা-পাওনা</div>
-    <div class="fg"><label class="fl">ব্যক্তির নাম</label><input class="fi" type="text" id="dName" placeholder="নাম..."></div>
+    <div class="fg">
+      <label class="fl">ব্যক্তির নাম</label>
+      <div style="display:flex; gap:6px;">
+        <input class="fi" type="text" id="dName" placeholder="নাম...">
+        <button class="add-cat-btn" style="height:38px; padding:0 10px; background:var(--g100); border:0.5px solid var(--border-color); border-radius:8px;" onclick="pickContact()">👤 কন্টাক্ট</button>
+      </div>
+    </div>
     <div class="fr">
       <div class="fg"><label class="fl">টাকার পরিমাণ</label><input class="fi" type="number" id="dAmt" placeholder="০"></div>
-      <div class="fg"><label class="fl">ধরন</label><div class="ttog"><button class="tbtn ${S.debtType==='receive'?'tr':''}" onclick="setDebtType('receive')">পাব</button><button class="tbtn ${S.debtType==='give'?'tg':''}" onclick="setDebtType('give')">দেব</button></div></div>
+      <div class="fg"><label class="fl">ধরন</label><div class="ttog"><button class="tbtn ${S.debtType==='receive'?'tr':''}" onclick="setDebtType('receive')">পাব (ধার নেওয়া)</button><button class="tbtn ${S.debtType==='give'?'tg':''}" onclick="setDebtType('give')">দেব (ধার দেওয়া)</button></div></div>
     </div>
+    <div class="fg"><label class="fl">লেনদেনের অ্যাকাউন্ট (ব্যালেন্স আপডেট হবে)</label><select class="fi" id="dAcct">${S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
     <div class="fg"><label class="fl">বিবরণ</label><input class="fi" type="text" id="dDesc" placeholder="বিবরণ..."></div>
     <button class="sbtn ${S.debtType==='give'?'amber':''}" id="addDebtBtn">যোগ করুন</button>
   </div>
-  <div class="sh">আমি পাব — ${tk(totRecv())}</div>
-  ${recv.length===0?'<div class="es">কেউ পাওনা নেই</div>':recv.map(d=>`<div class="li"><div class="ic receive"><i class="ti ti-arrow-down-left"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia receive">${tk(d.amount)}</div><button class="db" onclick="delDebt(${d.id})"><i class="ti ti-trash"></i></button></div></div>`).join('')}
-  <div class="sh">আমি দেব — ${tk(totPay())}</div>
-  ${pay.length===0?'<div class="es">কাউকে দেওয়া নেই</div>':pay.map(d=>`<div class="li"><div class="ic give"><i class="ti ti-arrow-up-right"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">${d.desc||''}</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="ia give">${tk(d.amount)}</div><button class="db" onclick="delDebt(${d.id})"><i class="ti ti-trash"></i></button></div></div>`).join('')}`;
+  <div class="sh">আমি পাব (ধার নিয়েছি, ফেরত দেব) — ${tk(totRecv())}</div>
+  ${recv.map(d=>`<div class="li"><div class="ic receive"><i class="ti ti-arrow-down-left"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">অ্যাকাউন্ট: ${acctName(d.acct)} ${d.desc?'· '+d.desc:''}</div></div><div><div class="ia receive">${tk(d.amount)}</div><button class="db" onclick="delDebt(${d.id})"><i class="ti ti-trash"></i></button></div></div>`).join('')}
+  <div class="sh">আমি দেব (ধার দিয়েছি, ফেরত পাব) — ${tk(totPay())}</div>
+  ${pay.map(d=>`<div class="li"><div class="ic give"><i class="ti ti-arrow-up-right"></i></div><div class="ii"><div class="it">${d.name}</div><div class="is">অ্যাকাউন্ট: ${acctName(d.acct)} ${d.desc?'· '+d.desc:''}</div></div><div><div class="ia give">${tk(d.amount)}</div><button class="db" onclick="delDebt(${d.id})"><i class="ti ti-trash"></i></button></div></div>`).join('')}`;
 }
 
 function rSettings(){
-  const allCats = getAllCategories();
   return `
-  <!-- ১. থিম ম্যানেজমেন্ট -->
   <div class="card" style="text-align:center;">
     <div class="ct" style="justify-content:center;"><i class="ti ti-palette"></i> অ্যাপের কালার থিম</div>
     <div class="theme-selector">
@@ -440,87 +418,146 @@ function rSettings(){
     </div>
   </div>
 
-  <!-- ২. প্রিন্ট রিপোর্ট -->
+  <!-- ডেইলি রিমাইন্ডার নোটিফিকেশন সেকশন -->
   <div class="card">
-    <div class="ct"><i class="ti ti-printer"></i> প্রিন্ট এবং পিডিএফ রিপোর্ট</div>
-    <button class="sbtn blue" onclick="window.print()"><i class="ti ti-file-text"></i> রিপোর্ট প্রিন্ট / PDF সেভ করুন</button>
+    <div class="ct"><i class="ti ti-bell"></i> ডেইলি হিসাব রিমাইন্ডার</div>
+    <div class="fr" style="align-items: center;">
+      <div class="fg"><label class="fl">রিমাইন্ডার সময়</label><input class="fi" type="time" id="remTime" value="${S.reminderTime || ''}"></div>
+      <div class="fg" style="margin-top:15px;"><label><input type="checkbox" id="remStatus" ${S.reminderEnabled?'checked':''}> চালু করুন</label></div>
+    </div>
+    <button class="sbtn blue" onclick="setupReminder()">রিমাইন্ডার সেভ করুন</button>
   </div>
 
-  <!-- ৩. ক্যাটাগরি ও সাব-ক্যাটাগরি কাস্টমাইজেশন -->
+  <!-- নতুন ব্যাংক/মোবাইল ব্যাংক অ্যাকাউন্ট এড করুন -->
+  <div class="card">
+    <div class="ct"><i class="ti ti-wallet"></i> নতুন ব্যাংক / মোবাইল ব্যাংক যুক্ত করুন</div>
+    <div class="fg"><label class="fl">অ্যাকাউন্টের নাম</label><input class="fi" type="text" id="newAcctName" placeholder="উদা: ডাচ-বাংলা ব্যাংক"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">ধরণ</label><select class="fi" id="newAcctType"><option value="ব্যাংক">ব্যাংক</option><option value="MFS">মোবাইল ব্যাংকিং (MFS)</option><option value="নগদ">নগদ/অন্যান্য</option></select></div>
+      <div class="fg"><label class="fl">শুরু বা ওপেনিং ব্যালেন্স</label><input class="fi" type="number" id="newAcctBal" placeholder="০"></div>
+    </div>
+    <button class="sbtn" onclick="addNewAccount()">নতুন অ্যাকাউন্ট যুক্ত করুন</button>
+  </div>
+
   <div class="card">
     <div class="ct"><i class="ti ti-category"></i> ম্যানুয়ালি খাত ও উপখাত যোগ করুন</div>
-    <div class="fg">
-      <label class="fl">নতুন মূল খাত</label>
-      <div style="display:flex; gap:6px;">
-        <input class="fi" type="text" id="newCatName" placeholder="উদা: ফ্রিল্যান্সিং">
-        <button class="sbtn" style="width:70px; margin-top:0;" onclick="addCustomCat()">যোগ</button>
-      </div>
-    </div>
-    <div class="fg" style="margin-top:12px;">
-      <label class="fl">মূল খাত নির্বাচন করুন</label>
-      <select class="fi" id="selectParentCat">${allCats.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-    </div>
-    <div class="fg">
-      <label class="fl">উক্ত খাতের নতুন উপখাত</label>
-      <div style="display:flex; gap:6px;">
-        <input class="fi" type="text" id="newSubCatName" placeholder="উদা: ক্লায়েন্ট বোনাস">
-        <button class="sbtn amber" style="width:70px; margin-top:0;" onclick="addCustomSubCat()">যোগ</button>
-      </div>
-    </div>
+    <div class="fg"><label class="fl">নতুন মূল খাত</label><div style="display:flex; gap:6px;"><input class="fi" type="text" id="newCatName" placeholder="উদা: ফ্রিল্যান্সিং"><button class="sbtn" style="width:70px; margin-top:0;" onclick="addCustomCat()">যোগ</button></div></div>
+    <div class="fg" style="margin-top:12px;"><label class="fl">মূল খাত নির্বাচন</label><select class="fi" id="selectParentCat">${getAllCategories().map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
+    <div class="fg"><label class="fl">উক্ত খাতের উপখাত</label><div style="display:flex; gap:6px;"><input class="fi" type="text" id="newSubCatName" placeholder="উদা: বোনাস"><button class="sbtn amber" style="width:70px; margin-top:0;" onclick="addCustomSubCat()">যোগ</button></div></div>
   </div>
 
-  <!-- ৪. ডেটা ব্যাকআপ ও রেস্টোর -->
-  <div class="card">
-    <div class="ct"><i class="ti ti-database"></i> ডেটা ব্যাকআপ ও রেস্টোর</div>
-    <button class="sbtn outline" onclick="exportData()"><i class="ti ti-download"></i> ব্যাকআপ ফাইল (JSON) ডাউনলোড করুন</button>
-    <div style="margin-top:12px;">
-      <label class="fl">ব্যাকআপ ফাইল থেকে রেস্টোর করুন</label>
-      <input type="file" id="importFile" accept=".json" style="font-size:12px; margin-top:4px;" onchange="importData(event)">
-    </div>
-  </div>
+  <div class="card"><div class="ct"><i class="ti ti-printer"></i> রিপোর্ট প্রিন্ট</div><button class="sbtn outline" onclick="window.print()">রিপোর্ট প্রিন্ট / PDF সেভ</button></div>
+  <div class="card"><div class="ct"><i class="ti ti-database"></i> ডেটা ব্যাকআপ ও রেস্টোর</div><button class="sbtn outline" onclick="exportData()">ব্যাকআপ JSON ডাউনলোড</button><input type="file" id="importFile" accept=".json" style="font-size:12px; margin-top:8px;" onchange="importData(event)"></div>
+  <div class="card"><button class="sbtn red" onclick="clearAllData()">সব ডেটা মুছে ফেলুন</button></div>`;
+}
 
-  <div class="card" style="margin-top:15px;"><div class="ct" style="color:#c0392b;"><i class="ti ti-alert-triangle"></i> সব ডেটা রিসেট করুন</div><button class="sbtn red" onclick="clearAllData()">সব ডেটা মুছে ফেলুন</button></div>`;
+function executeTransfer() {
+  const fromId = document.getElementById('tFrom').value;
+  const toId = document.getElementById('tTo').value;
+  const amt = Number(document.getElementById('tAmt').value);
+  if(fromId === toId) return alert('একই অ্যাকাউন্টে ট্রান্সফার সম্ভব নয়!');
+  if(!amt || amt <= 0) return alert('সঠিক পরিমাণ লিখুন!');
+  
+  const fIdx = S.accounts.findIndex(a=>a.id===fromId);
+  const tIdx = S.accounts.findIndex(a=>a.id===toId);
+  
+  if(S.accounts[fIdx].balance < amt) return alert('নির্বাচিত অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই!');
+  
+  S.accounts[fIdx].balance -= amt;
+  S.accounts[tIdx].balance += amt;
+  save(); render();
+  alert('ব্যালেন্স সফলভাবে ট্রান্সফার করা হয়েছে!');
+}
+
+function addNewAccount() {
+  const name = document.getElementById('newAcctName').value.trim();
+  const type = document.getElementById('newAcctType').value;
+  const bal = Number(document.getElementById('newAcctBal').value) || 0;
+  if(!name) return alert('অ্যাকাউন্টের নাম দিন!');
+  
+  const id = 'cust_' + Date.now();
+  S.accounts.push({ id, name, type, balance: bal, bg: '#eeedfe', tc: '#26215c', icon: type==='ব্যাংক'?'ti-building-bank':'ti-device-mobile' });
+  save(); render();
+  alert('নতুন অ্যাকাউন্ট সফলভাবে যোগ হয়েছে!');
+}
+
+async function pickContact() {
+  const props = ['name'];
+  const opts = { multiple: false };
+  try {
+    if ('contacts' in navigator && 'ContactsManager' in window) {
+      const contacts = await navigator.contacts.select(props, opts);
+      if (contacts.length && contacts[0].name.length) {
+        document.getElementById('dName').value = contacts[0].name[0];
+      }
+    } else {
+      const n = prompt('আপনার ব্রাউজারে কন্টাক্ট এপিআই সাপোর্ট করে না। নাম লিখুন:');
+      if(n) document.getElementById('dName').value = n;
+    }
+  } catch (ex) { console.log(ex); }
+}
+
+function setupReminder() {
+  const timeVal = document.getElementById('remTime').value;
+  const isEnabled = document.getElementById('remStatus').checked;
+  S.reminderTime = timeVal; S.reminderEnabled = isEnabled; save();
+  
+  if (isEnabled && timeVal) {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+    startReminderCheck();
+    alert('ডেইলি রিমাইন্ডার সফলভাবে অন করা হয়েছে!');
+  } else {
+    if(reminderTimer) clearInterval(reminderTimer);
+    alert('রিমাইন্ডার আপডেট করা হয়েছে।');
+  }
+}
+
+function startReminderCheck() {
+  if(reminderTimer) clearInterval(reminderTimer);
+  if(!S.reminderEnabled || !S.reminderTime) return;
+  reminderTimer = setInterval(() => {
+    const now = new Date();
+    const curTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    if (curTime === S.reminderTime) {
+      new Notification("হিসাব ট্র্যাকার প্রো 📝", { body: "আজকের সব আয়-ব্যয়ের হিসাব অ্যাপে যোগ করেছেন তো? এখনই হিসাব রাখুন।" });
+    }
+  }, 60000); // প্রতি মিনিটে চেক করবে
 }
 
 function updateSubDropdown() {
   const cat = document.getElementById('eCat').value;
   const subSelect = document.getElementById('eSubCat');
-  if(subSelect) {
-    subSelect.innerHTML = getSubsForCat(cat).map(s=>`<option value="${s}">${s}</option>`).join('');
-  }
+  if(subSelect) subSelect.innerHTML = getSubsForCat(cat).map(s=>`<option value="${s}">${s}</option>`).join('');
 }
 
 function addCustomCat() {
-  const input = document.getElementById('newCatName');
-  const name = input ? input.value.trim() : "";
-  if(name !== "") {
-    if(getAllCategories().includes(name)) return alert('এই খাতটি ইতিমধ্যেই আছে!');
+  const name = document.getElementById('newCatName').value.trim();
+  if(name) {
+    if(getAllCategories().includes(name)) return alert('ইতিমধ্যেই আছে!');
     S.customCategories.push(name); save(); render();
-    alert('নতুন মূল খাত সফলভাবে যুক্ত হয়েছে!');
-  } else { alert('খাতের নাম লিখুন!'); }
+  }
 }
 
 function addCustomSubCat() {
   const cat = document.getElementById('selectParentCat').value;
-  const input = document.getElementById('newSubCatName');
-  const name = input ? input.value.trim() : "";
-  if(name !== "") {
+  const name = document.getElementById('newSubCatName').value.trim();
+  if(name) {
     if(!S.subCategories[cat]) S.subCategories[cat] = [];
-    if(S.subCategories[cat].includes(name)) return alert('এই উপখাতটি ইতিমধ্যেই আছে!');
+    if(S.subCategories[cat].includes(name)) return alert('ইতিমধ্যেই আছে!');
     S.subCategories[cat].push(name); save(); render();
-    alert(`${cat} খাতে নতুন উপখাত সফলভাবে যুক্ত হয়েছে!`);
-  } else { alert('উপখাতের নাম লিখুন!'); }
+  }
 }
 
 function saveBudget() {
-  const cat = document.getElementById('bCat').value;
-  const amt = document.getElementById('bAmt').value;
-  if(!amt || Number(amt) < 0) return alert('সঠিক পরিমাণ লিখুন!');
+  const cat = document.getElementById('bCat').value; const amt = document.getElementById('bAmt').value;
+  if(!amt || Number(amt) < 0) return alert('সঠিক পরিমাণ!');
   S.budgets[cat] = Number(amt); save(); render();
 }
 
 function editAcctBal(id) {
-  const amt = prompt('নতুন ব্যালেন্স ইনপুট করুন (৳):');
+  const amt = prompt('নতুন ব্যালেন্স (৳):');
   if(amt !== null && !isNaN(amt) && Number(amt) >= 0) {
     const idx = S.accounts.findIndex(a=>a.id===id);
     if(idx > -1) { S.accounts[idx].balance = Number(amt); save(); render(); }
@@ -537,7 +574,11 @@ function delExp(id) {
   }
 }
 
-function delDebt(id) { if(confirm('মুছে ফেলবেন?')){ S.debts = S.debts.filter(d=>d.id!==id); save(); render(); } }
+function delDebt(id) {
+  if(confirm('মুছে ফেলবেন? (এটি অ্যাকাউন্ট ব্যালেন্স রিভার্স করবে না)')){
+    S.debts = S.debts.filter(d=>d.id!==id); save(); render();
+  }
+}
 
 function exportData() {
   const blob = new Blob([JSON.stringify(S)],{type:'application/json'});
@@ -546,25 +587,18 @@ function exportData() {
 }
 
 function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
       const importedState = JSON.parse(e.target.result);
-      if (importedState && (importedState.expenses || importedState.accounts)) {
-        S = importedState;
-        save();
-        document.body.className = S.theme === 'green' ? '' : 'theme-' + S.theme;
-        sw('dashboard');
-        alert('ডেটা সফলভাবে রেস্টোর করা হয়েছে!');
-      } else { alert('ভুল ফাইল ফরম্যাট!'); }
-    } catch (err) { alert('ফাইলটি পড়া সম্ভব হয়নি, সঠিক JSON ফাইল আপলোড করুন।'); }
+      if (importedState) { S = importedState; save(); sw('dashboard'); startReminderCheck(); }
+    } catch (err) { alert('ভুল ফাইল!'); }
   };
   reader.readAsText(file);
 }
 
-function clearAllData() { if(confirm('সাবধান! আপনার সব জমানো হিসাব মুছে যাবে। ডিলিট করবেন?')){ localStorage.removeItem('hisab_state_v2'); S=loadState(); sw('dashboard'); } }
+function clearAllData() { if(confirm('সব ডাটা ডিলিট করবেন?')){ localStorage.removeItem('hisab_state_v3'); S=loadState(); sw('dashboard'); } }
 
 function attachEv(){
   const ae=document.getElementById('addExpBtn');
@@ -572,7 +606,7 @@ function attachEv(){
     const amt=document.getElementById('eAmt').value; const date=document.getElementById('eDate').value;
     const cat=document.getElementById('eCat').value; const sub=document.getElementById('eSubCat').value;
     const desc=document.getElementById('eDesc').value.trim(); const acct=document.getElementById('eAcct').value;
-    if(!amt||Number(amt)<=0) return alert('সঠিক পরিমাণ লিখুন!');
+    if(!amt||Number(amt)<=0) return alert('সঠিক পরিমাণ দিন!');
     S.expenses.push({id:S.nextId++, amount:Number(amt), category:cat, subCategory:sub, date:date||getTodayDate(), desc, acct});
     const ai=S.accounts.findIndex(a=>a.id===acct); if(ai>-1) S.accounts[ai].balance=Math.max(0, S.accounts[ai].balance-Number(amt));
     save(); render();
@@ -580,14 +614,28 @@ function attachEv(){
   
   const ad=document.getElementById('addDebtBtn');
   if(ad) ad.onclick=()=>{
-    const name=document.getElementById('dName').value.trim(); const amt=document.getElementById('dAmt').value; const desc=document.getElementById('dDesc').value.trim();
+    const name=document.getElementById('dName').value.trim(); const amt=document.getElementById('dAmt').value;
+    const desc=document.getElementById('dDesc').value.trim(); const acct=document.getElementById('dAcct').value;
     if(!name||!amt||Number(amt)<=0) return alert('সঠিক তথ্য দিন!');
-    S.debts.push({id:S.nextId++, name, amount:Number(amt), type:S.debtType, desc});
+    
+    // ব্যালেন্স আপডেট লজিক
+    const ai=S.accounts.findIndex(a=>a.id===acct);
+    if(ai>-1){
+      if(S.debtType==='give') { // ধার দিলে ব্যালেন্স কমবে
+        if(S.accounts[ai].balance < Number(amt)) return alert('অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই!');
+        S.accounts[ai].balance -= Number(amt);
+      } else { // ধার নিলে ব্যালেন্স বাড়বে
+        S.accounts[ai].balance += Number(amt);
+      }
+    }
+    
+    S.debts.push({id:S.nextId++, name, amount:Number(amt), type:S.debtType, desc, acct});
     save(); render();
   };
 }
 
 render();
+startReminderCheck(); // লোড হওয়ার পর রিমাইন্ডার ব্যাকগ্রাউন্ডে চালু করা
 </script>
 </body>
 </html>
